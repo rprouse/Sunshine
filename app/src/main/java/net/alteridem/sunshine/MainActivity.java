@@ -1,16 +1,19 @@
 package net.alteridem.sunshine;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -40,16 +43,15 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     /**
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
+
+        ArrayAdapter<String> mAdapter;
 
         public PlaceholderFragment() {
         }
@@ -58,6 +60,28 @@ public class MainActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+            String[] forecastArray = {
+                "Today - Sunny - 21° / 14°",
+                "Tomorrow - Rainy - 19° / 12°",
+                "Mon - Cloudy - 20° / 18°",
+                "Tue - Drizzle - 21° / 17°",
+                "Weds - Sunny - 28° / 16°",
+                "Thurs - Sunny - 30° / 19°",
+                "Fri - Partly Sunny - 28° / 16°",
+                "Sat - Sunny - 28° / 16°" };
+
+            List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
+
+            mAdapter = new ArrayAdapter<String>(
+                getActivity(),
+                R.layout.list_item_forecast,
+                R.id.list_item_forecast_textview,
+                weekForecast );
+
+            ListView listView = (ListView)rootView.findViewById(R.id.listview_forecast);
+            listView.setAdapter(mAdapter);
+
             return rootView;
         }
     }
