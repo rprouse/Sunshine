@@ -107,7 +107,6 @@ public class ForecastFragment extends Fragment {
                     .appendQueryParameter("mode", "json")
                     .appendQueryParameter("units", units)
                     .appendQueryParameter("cnt", Integer.toString(days));
-                Log.v(LOG_TAG, "Built URL: " + builder.build().toString());
                 URL url = new URL( builder.build().toString() );
 
                 // Create the request to OpenWeatherMap, and open the connection
@@ -117,7 +116,7 @@ public class ForecastFragment extends Fragment {
 
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 if (inputStream == null) {
                     // Nothing to do.
                     return null;
@@ -129,7 +128,8 @@ public class ForecastFragment extends Fragment {
                     // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                     // But it does make debugging a *lot* easier if you print out the completed
                     // buffer for debugging.
-                    buffer.append(line + "\n");
+                    buffer.append(line);
+                    buffer.append("\n");
                 }
 
                 if (buffer.length() == 0) {
@@ -159,6 +159,7 @@ public class ForecastFragment extends Fragment {
                 return WeatherDataParser.getWeatherDataFromJson(forecastJsonStr, days);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Error, failed to parse JSON ", e);
+                e.printStackTrace();
                 return null;
             }
         }
