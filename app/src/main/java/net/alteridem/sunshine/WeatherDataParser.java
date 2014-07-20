@@ -23,6 +23,10 @@ public class WeatherDataParser {
         return format.format(date).toString();
     }
 
+    private static double convertToImperial(double celsius) {
+        return 1.8 * celsius + 32;
+    }
+
     /**
      * Prepare the weather high/lows for presentation.
      */
@@ -42,7 +46,7 @@ public class WeatherDataParser {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    public static String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
+    public static String[] getWeatherDataFromJson(String forecastJsonStr, int numDays, String units)
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
@@ -82,6 +86,11 @@ public class WeatherDataParser {
             JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
             double high = temperatureObject.getDouble(OWM_MAX);
             double low = temperatureObject.getDouble(OWM_MIN);
+
+            if (units.equalsIgnoreCase("imperial")) {
+                high = convertToImperial(high);
+                low = convertToImperial(low);
+            }
 
             highAndLow = formatHighLows(high, low);
             resultStrs[i] = day + " - " + description + " - " + highAndLow;

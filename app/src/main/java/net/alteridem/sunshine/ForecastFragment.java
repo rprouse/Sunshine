@@ -67,6 +67,12 @@ public class ForecastFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.forecast_fragment, menu);
     }
@@ -75,13 +81,21 @@ public class ForecastFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-            new DownloadForecastTask().execute(location);
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void updateWeather() {
+        new DownloadForecastTask().execute(getSharedPreference(R.string.pref_location_key, R.string.pref_location_default));
+    }
+
+    private String getSharedPreference(int resourceId, int defaultValueId) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        return sharedPreferences.getString(getString(resourceId), getString(defaultValueId));
+    }
+
 
     private class DownloadForecastTask extends AsyncTask<String, Void, String[]> {
 
@@ -148,7 +162,7 @@ public class ForecastFragment extends Fragment {
                 forecastJsonStr = buffer.toString();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
+                // If the code didn't successfully get the weather data, there's no point in attempting
                 // to parse it.
                 return null;
             } finally{
@@ -165,7 +179,7 @@ public class ForecastFragment extends Fragment {
             }
 
             try {
-                return WeatherDataParser.getWeatherDataFromJson(forecastJsonStr, days);
+                return WeatherDataParser.getWeatherDataFromJson(forecastJsonStr, days, getSharedPreference(R.string.pref_units_key, R.string.pref_units_default));
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Error, failed to parse JSON ", e);
                 e.printStackTrace();
