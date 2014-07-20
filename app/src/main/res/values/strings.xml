@@ -7,4 +7,23 @@
     <string name="title_activity_detail">Weather Details</string>
     <string name="hello_world">Hello world!</string>
 
+
+    <!-- Strings related to Settings -->
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="pref_location_title">Location</string>
+    <string name="pref_location_key" translatable="false">location</string>
+    <string name="pref_location_default" translatable="false">Hamilton, ON</string>
+
+    <string name="pref_units_title">Units</string>
+    <string name="pref_units_key">units</string>
+    <string-array name="pref_units_list_titles">
+        <item>Metric</item>
+        <item>Imperial</item>
+    </string-array>
+    <string-array name="pref_units_list_values" translatable="false">
+        <item>metric</item>
+        <item>imperial</item>
+    </string-array>
+
 </resources>

@@ -3,9 +3,9 @@
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
-        android:key="setting_location"
-        android:title="@string/pref_title_location"
-        android:defaultValue="@string/pref_default_location"
+        android:key="@string/pref_location_key"
+        android:title="@string/pref_location_title"
+        android:defaultValue="@string/pref_location_default"
         android:selectAllOnFocus="true"
         android:inputType="textCapWords"
         android:capitalize="words"
@@ -16,8 +16,8 @@
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
     <ListPreference
-        android:key="setting_units"
-        android:title="@string/pref_title_units"
+        android:key="@string/pref_units_key"
+        android:title="@string/pref_units_title"
         android:defaultValue="metric"
         android:entries="@array/pref_units_list_titles"
         android:entryValues="@array/pref_units_list_values"
