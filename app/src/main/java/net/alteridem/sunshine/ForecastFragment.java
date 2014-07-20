@@ -23,8 +23,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -42,6 +40,16 @@ public class ForecastFragment extends Fragment {
             Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         _rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        _adapter = new ArrayAdapter<String>(
+                getActivity(),
+                R.layout.list_item_forecast,
+                R.id.list_item_forecast_textview,
+                new ArrayList<String>() );
+
+        ListView listView = (ListView)_rootView.findViewById(R.id.listview_forecast);
+        listView.setAdapter(_adapter);
+
         return _rootView;
     }
 
@@ -58,20 +66,6 @@ public class ForecastFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void OnForecastDownloaded(String[] forecastArray) {
-
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
-
-        _adapter = new ArrayAdapter<String>(
-                getActivity(),
-                R.layout.list_item_forecast,
-                R.id.list_item_forecast_textview,
-                weekForecast );
-
-        ListView listView = (ListView)_rootView.findViewById(R.id.listview_forecast);
-        listView.setAdapter(_adapter);
     }
 
     private class DownloadForecastTask extends AsyncTask<String, Void, String[]> {
@@ -167,7 +161,10 @@ public class ForecastFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] strings) {
             if(strings != null) {
-                ForecastFragment.this.OnForecastDownloaded(strings);
+                _adapter.clear();
+                for (String forecast : strings) {
+                    _adapter.add(forecast);
+                }
             }
         }
     }
