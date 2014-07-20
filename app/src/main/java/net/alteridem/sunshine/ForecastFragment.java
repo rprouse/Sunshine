@@ -1,14 +1,20 @@
 package net.alteridem.sunshine;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,9 +40,24 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         _rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        new DownloadForecastTask().execute("http://api.openweathermap.org/data/2.5/forecast/daily?q=Hamilton,ON&mode=json&units=metric&cnt=7");
         return _rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.forecast_fragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_refresh) {
+            new DownloadForecastTask().execute("Hamilton,ON");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void OnForecastDownloaded(String[] forecastArray) {
@@ -59,6 +80,10 @@ public class ForecastFragment extends Fragment {
 
         @Override
         protected String[] doInBackground(String... params) {
+
+            int days = 7;
+            String units = "metric";
+
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -71,7 +96,19 @@ public class ForecastFragment extends Fragment {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                URL url = new URL(params[0]);
+                Uri.Builder builder = new Uri.Builder();
+                builder.scheme("http")
+                    .authority("api.openweathermap.org")
+                    .appendPath("data")
+                    .appendPath("2.5")
+                    .appendPath("forecast")
+                    .appendPath("daily")
+                    .appendQueryParameter("q", params[0])
+                    .appendQueryParameter("mode", "json")
+                    .appendQueryParameter("units", units)
+                    .appendQueryParameter("cnt", Integer.toString(days));
+                Log.v(LOG_TAG, "Built URL: " + builder.build().toString());
+                URL url = new URL( builder.build().toString() );
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -118,22 +155,19 @@ public class ForecastFragment extends Fragment {
                 }
             }
 
-            String[] forecastArray = {
-                    "Today - Sunny - 21° / 14°",
-                    "Tomorrow - Rainy - 19° / 12°",
-                    "Mon - Cloudy - 20° / 18°",
-                    "Tue - Drizzle - 21° / 17°",
-                    "Weds - Sunny - 28° / 16°",
-                    "Thurs - Sunny - 30° / 19°",
-                    "Fri - Partly Sunny - 28° / 16°",
-                    "Sat - Sunny - 28° / 16°" };
-
-            return forecastArray;
+            try {
+                return WeatherDataParser.getWeatherDataFromJson(forecastJsonStr, days);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "Error, failed to parse JSON ", e);
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(String[] strings) {
-            ForecastFragment.this.OnForecastDownloaded(strings);
+            if(strings != null) {
+                ForecastFragment.this.OnForecastDownloaded(strings);
+            }
         }
     }
 }
