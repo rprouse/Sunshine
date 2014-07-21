@@ -10,6 +10,9 @@ import net.alteridem.sunshine.data.WeatherContract.LocationEntry;
 import net.alteridem.sunshine.data.WeatherContract.WeatherEntry;
 import net.alteridem.sunshine.data.WeatherDbHelper;
 
+import java.util.Map;
+import java.util.Set;
+
 public class TestDb extends AndroidTestCase {
     private static final String LOG_TAG = TestDb.class.getSimpleName();
 
@@ -21,119 +24,73 @@ public class TestDb extends AndroidTestCase {
     }
 
     public void testInsertReadDb() {
-        String testName = "North Pole";
-        String testLocation = "99999";
-        double testLatitude = 89.999;
-        double testLongitude = -123.123;
-
         WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Insert
-        ContentValues values = new ContentValues();
-        values.put(LocationEntry.COLUMN_CITY_NAME, testName);
-        values.put(LocationEntry.COLUMN_LOCATION_SETTING, testLocation);
-        values.put(LocationEntry.COLUMN_COORD_LAT, testLatitude);
-        values.put(LocationEntry.COLUMN_COORD_LONG, testLongitude);
+        ContentValues values = getLocationContentValues();
 
         long rowId = db.insert(LocationEntry.TABLE_NAME, null, values);
 
         assertTrue(rowId != -1);
         Log.d(LOG_TAG, "New row id: " + rowId);
 
-        // Read
-        String[] columns = {
-                LocationEntry._ID,
-                LocationEntry.COLUMN_LOCATION_SETTING,
-                LocationEntry.COLUMN_CITY_NAME,
-                LocationEntry.COLUMN_COORD_LAT,
-                LocationEntry.COLUMN_COORD_LONG
-        };
+        Cursor cursor = db.query( LocationEntry.TABLE_NAME, null, null, null, null, null, null );
 
-        Cursor cursor = db.query( LocationEntry.TABLE_NAME, columns, null, null, null, null, null );
-
-        if (cursor.moveToFirst()) {
-            int i = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_SETTING);
-            assertEquals(testLocation, cursor.getString(i));
-
-            i = cursor.getColumnIndex(LocationEntry.COLUMN_CITY_NAME);
-            assertEquals(testName, cursor.getString(i));
-
-            i = cursor.getColumnIndex(LocationEntry.COLUMN_COORD_LAT);
-            assertEquals(testLatitude, cursor.getDouble(i));
-
-            i = cursor.getColumnIndex(LocationEntry.COLUMN_COORD_LONG);
-            assertEquals(testLongitude, cursor.getDouble(i));
-        } else {
-            fail("Failed to read location database row");
-        }
+        validateCursor(cursor, values);
 
         // Fantastic.  Now that we have a location, add some weather!
-        ContentValues weatherValues = new ContentValues();
-        weatherValues.put(WeatherEntry.COLUMN_LOC_KEY, rowId);
-        weatherValues.put(WeatherEntry.COLUMN_DATETEXT, "20141205");
-        weatherValues.put(WeatherEntry.COLUMN_DEGREES, 1.1);
-        weatherValues.put(WeatherEntry.COLUMN_HUMIDITY, 1.2);
-        weatherValues.put(WeatherEntry.COLUMN_PRESSURE, 1.3);
-        weatherValues.put(WeatherEntry.COLUMN_MAX_TEMP, 75);
-        weatherValues.put(WeatherEntry.COLUMN_MIN_TEMP, 65);
-        weatherValues.put(WeatherEntry.COLUMN_SHORT_DESC, "Asteroids");
-        weatherValues.put(WeatherEntry.COLUMN_WIND_SPEED, 5.5);
-        weatherValues.put(WeatherEntry.COLUMN_WEATHER_ID, 321);
+        values = getWeatherContentValues(rowId);
 
         rowId = db.insert(WeatherEntry.TABLE_NAME, null, values);
 
         assertTrue(rowId != -1);
         Log.d(LOG_TAG, "New row id: " + rowId);
 
-        // Read
-        String[] columns_w = {
-                WeatherEntry._ID,
-                WeatherEntry.COLUMN_LOC_KEY,
-                WeatherEntry.COLUMN_DATETEXT,
-                WeatherEntry.COLUMN_DEGREES,
-                WeatherEntry.COLUMN_HUMIDITY,
-                WeatherEntry.COLUMN_PRESSURE,
-                WeatherEntry.COLUMN_MAX_TEMP,
-                WeatherEntry.COLUMN_MIN_TEMP,
-                WeatherEntry.COLUMN_SHORT_DESC,
-                WeatherEntry.COLUMN_WIND_SPEED,
-                WeatherEntry.COLUMN_WEATHER_ID
-        };
+        cursor = db.query( WeatherEntry.TABLE_NAME, null, null, null, null, null, null );
 
-        cursor = db.query( WeatherEntry.TABLE_NAME, columns_w, null, null, null, null, null );
+        validateCursor(cursor, values);
 
-        if (cursor.moveToFirst()) {
-
-            int i = cursor.getColumnIndex(WeatherEntry.COLUMN_DATETEXT);
-            assertEquals("20141205", cursor.getString(i));
-
-            i = cursor.getColumnIndex(WeatherEntry.COLUMN_DEGREES);
-            assertEquals(1.1, cursor.getDouble(i));
-
-            i = cursor.getColumnIndex(WeatherEntry.COLUMN_HUMIDITY);
-            assertEquals(1.2, cursor.getDouble(i));
-
-            i = cursor.getColumnIndex(WeatherEntry.COLUMN_PRESSURE);
-            assertEquals(1.3, cursor.getDouble(i));
-
-            i = cursor.getColumnIndex(WeatherEntry.COLUMN_MAX_TEMP);
-            assertEquals(75.0, cursor.getDouble(i));
-
-            i = cursor.getColumnIndex(WeatherEntry.COLUMN_MIN_TEMP);
-            assertEquals(65.0, cursor.getDouble(i));
-
-            i = cursor.getColumnIndex(WeatherEntry.COLUMN_SHORT_DESC);
-            assertEquals("Asteroids", cursor.getString(i));
-
-            i = cursor.getColumnIndex(WeatherEntry.COLUMN_WIND_SPEED);
-            assertEquals(5.5, cursor.getDouble(i));
-
-            i = cursor.getColumnIndex(WeatherEntry.COLUMN_WEATHER_ID);
-            assertEquals(321, cursor.getInt(i));
-        } else {
-            fail("Failed to read weather database row");
-        }
         dbHelper.close();
+    }
+
+    private ContentValues getWeatherContentValues(long rowId) {
+        ContentValues values = new ContentValues();
+        values.put(WeatherEntry.COLUMN_LOC_KEY, rowId);
+        values.put(WeatherEntry.COLUMN_DATETEXT, "20141205");
+        values.put(WeatherEntry.COLUMN_DEGREES, 1.1);
+        values.put(WeatherEntry.COLUMN_HUMIDITY, 1.2);
+        values.put(WeatherEntry.COLUMN_PRESSURE, 1.3);
+        values.put(WeatherEntry.COLUMN_MAX_TEMP, 75);
+        values.put(WeatherEntry.COLUMN_MIN_TEMP, 65);
+        values.put(WeatherEntry.COLUMN_SHORT_DESC, "Asteroids");
+        values.put(WeatherEntry.COLUMN_WIND_SPEED, 5.5);
+        values.put(WeatherEntry.COLUMN_WEATHER_ID, 321);
+        return values;
+    }
+
+    private ContentValues getLocationContentValues() {
+        ContentValues values = new ContentValues();
+        ContentValues testValues = new ContentValues();
+        testValues.put(LocationEntry.COLUMN_LOCATION_SETTING, "99705");
+        testValues.put(LocationEntry.COLUMN_CITY_NAME, "North Pole");
+        testValues.put(LocationEntry.COLUMN_COORD_LAT, 64.7488);
+        testValues.put(LocationEntry.COLUMN_COORD_LONG, -147.353);
+        return values;
+    }
+
+    static void validateCursor(Cursor valueCursor, ContentValues expectedValues) {
+
+        assertTrue(valueCursor.moveToFirst());
+
+        Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
+        for (Map.Entry<String, Object> entry : valueSet) {
+            String columnName = entry.getKey();
+            int idx = valueCursor.getColumnIndex(columnName);
+            assertFalse(idx == -1);
+            String expectedValue = entry.getValue().toString();
+            assertEquals(expectedValue, valueCursor.getString(idx));
+        }
+        valueCursor.close();
     }
 }
