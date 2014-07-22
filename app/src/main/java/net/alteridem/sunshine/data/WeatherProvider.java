@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
@@ -104,12 +105,11 @@ public class WeatherProvider extends ContentProvider {
             );
             break;
         }
-
         default:
-        throw new UnsupportedOperationException("Unknown uri: " + uri);
-    }
-    retCursor.setNotificationUri(getContext().getContentResolver(), uri);
-    return retCursor;
+            throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return retCursor;
     }
 
     @Override
@@ -136,7 +136,8 @@ public class WeatherProvider extends ContentProvider {
         Uri returnUri;
         switch (match) {
             case WEATHER: {
-                long id = mOpenHelper.getWritableDatabase().insert(WeatherContract.WeatherEntry.TABLE_NAME, null, values);
+                SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+                long id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, values);
                 if (id > 0)
                     returnUri = WeatherContract.WeatherEntry.buildWeatherUri(id);
                 else
@@ -144,7 +145,8 @@ public class WeatherProvider extends ContentProvider {
                 break;
             }
             case LOCATION: {
-                long id = mOpenHelper.getWritableDatabase().insert(WeatherContract.LocationEntry.TABLE_NAME, null, values);
+                SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+                long id = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, values);
                 if (id > 0)
                     returnUri = WeatherContract.WeatherEntry.buildWeatherUri(id);
                 else

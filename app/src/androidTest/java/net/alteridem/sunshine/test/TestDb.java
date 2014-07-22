@@ -66,8 +66,12 @@ public class TestDb extends AndroidTestCase {
     }
 
     public static ContentValues getLocationContentValues() {
+        return getLocationContentValues(LOCATION_SETTING);
+    }
+
+    public static ContentValues getLocationContentValues(String location_setting) {
         ContentValues values = new ContentValues();
-        values.put(LocationEntry.COLUMN_LOCATION_SETTING, LOCATION_SETTING);
+        values.put(LocationEntry.COLUMN_LOCATION_SETTING, location_setting);
         values.put(LocationEntry.COLUMN_CITY_NAME, "North Pole");
         values.put(LocationEntry.COLUMN_COORD_LAT, 64.7488);
         values.put(LocationEntry.COLUMN_COORD_LONG, -147.353);
