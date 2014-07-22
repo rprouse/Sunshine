@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
@@ -10,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Today"
+        tools:text="Today"
         android:id="@+id/list_item_date_textview"
         android:layout_alignParentLeft="true" />
 
@@ -28,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Sunny"
+        tools:text="Sunny"
         android:id="@+id/list_item_forecast_textview"
         android:layout_toRightOf="@+id/list_item_forecast_separator" />
 
@@ -36,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="21°"
+        tools:text="21°"
         android:id="@+id/list_item_high_textview"
         android:layout_toLeftOf="@+id/list_item_temp_separator" />
 
@@ -54,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="14°"
+        tools:text="14°"
         android:id="@+id/list_item_low_textview"
         android:layout_alignParentRight="true"
         android:layout_alignBottom="@+id/list_item_high_textview" />
