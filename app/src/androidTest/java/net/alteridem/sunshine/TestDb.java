@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class TestDb extends AndroidTestCase {
+
     private static final String LOG_TAG = TestDb.class.getSimpleName();
 
     public void testCreateDb() throws Throwable {
@@ -23,7 +24,7 @@ public class TestDb extends AndroidTestCase {
         db.close();
     }
 
-    public void testInsertReadDb() {
+    public void testInsertReadDb() throws Throwable {
         WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -71,11 +72,10 @@ public class TestDb extends AndroidTestCase {
 
     private ContentValues getLocationContentValues() {
         ContentValues values = new ContentValues();
-        ContentValues testValues = new ContentValues();
-        testValues.put(LocationEntry.COLUMN_LOCATION_SETTING, "99705");
-        testValues.put(LocationEntry.COLUMN_CITY_NAME, "North Pole");
-        testValues.put(LocationEntry.COLUMN_COORD_LAT, 64.7488);
-        testValues.put(LocationEntry.COLUMN_COORD_LONG, -147.353);
+        values.put(LocationEntry.COLUMN_LOCATION_SETTING, "99705");
+        values.put(LocationEntry.COLUMN_CITY_NAME, "North Pole");
+        values.put(LocationEntry.COLUMN_COORD_LAT, 64.7488);
+        values.put(LocationEntry.COLUMN_COORD_LONG, -147.353);
         return values;
     }
 
