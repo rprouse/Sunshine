@@ -14,8 +14,11 @@ public class TestProvider extends AndroidTestCase {
 
     private static final String LOG_TAG = TestProvider.class.getSimpleName();
     private static final String LOCATION_ONE = "location 1";
-    private static final String LOCATION_TWO = "location 2";
-    private static final String LOCATION_THREE = "location 3";
+
+    static final String KALAMAZOO_LOCATION_SETTING = "kalamazoo";
+    static final String KALAMAZOO_WEATHER_START_DATE = "20140625";
+
+    long locationRowId;
 
     public void testInsertReadProvider() throws Throwable {
 
@@ -106,150 +109,175 @@ public class TestProvider extends AndroidTestCase {
         TestDb.validateCursor(weatherCursor, weatherValues);
     }
 
-    public void testDelete() {
-        // Add a record
-        ContentValues testValues = TestDb.getLocationContentValues(LOCATION_TWO);
+    // brings our database to an empty state
+    public void deleteAllRecords() {
+        mContext.getContentResolver().delete(
+                WeatherEntry.CONTENT_URI,
+                null,
+                null
+        );
+        mContext.getContentResolver().delete(
+                LocationEntry.CONTENT_URI,
+                null,
+                null
+        );
 
-        Uri returnUri = mContext.getContentResolver().insert(LocationEntry.CONTENT_URI, testValues);
-        long locationRowId = ContentUris.parseId(returnUri);
-
-        // Verify we got a row back.
-        assertTrue(locationRowId != -1);
-        Log.d(LOG_TAG, "New row id: " + locationRowId);
-
-        // Now see if we can successfully query if we include the row id
         Cursor cursor = mContext.getContentResolver().query(
-                LocationEntry.buildLocationUri(locationRowId),
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // sort order
+                WeatherEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
         );
+        assertEquals(0, cursor.getCount());
+        cursor.close();
 
-        TestDb.validateCursor(cursor, testValues);
-
-        // Now that we have a location, add some weather!
-        ContentValues weatherValues = TestDb.getWeatherContentValues(locationRowId);
-
-        Uri weatherUri = mContext.getContentResolver().insert(WeatherEntry.CONTENT_URI, weatherValues);
-        ContentUris.parseId(weatherUri);
-
-        Cursor weatherCursor = mContext.getContentResolver().query(
-                WeatherEntry.buildWeatherLocation(LOCATION_TWO),  // Table to Query
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // columns to group by
-        );
-
-        TestDb.validateCursor(weatherCursor, weatherValues);
-
-        // Now delete the records
-        mContext.getContentResolver().delete(
-                WeatherEntry.buildWeatherLocation(LOCATION_TWO),
-                null, // cols for "where" clause
-                null // values for "where" clause
-        );
-
-        // Now try to fetch it again
-        weatherCursor = mContext.getContentResolver().query(
-                WeatherEntry.buildWeatherLocation(LOCATION_TWO),  // Table to Query
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // columns to group by
-        );
-
-        // We shouldn't find it
-        assertFalse(weatherCursor.moveToFirst());
-        weatherCursor.close();
-
-        mContext.getContentResolver().delete(
-                LocationEntry.buildLocationUri(locationRowId),
-                null, // cols for "where" clause
-                null // values for "where" clause
-        );
-
-        // Now try to fetch it again
         cursor = mContext.getContentResolver().query(
-                LocationEntry.buildLocationUri(locationRowId),
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // sort order
+                LocationEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
         );
-
-        // We shouldn't find it
-        assertFalse(cursor.moveToFirst());
+        assertEquals(0, cursor.getCount());
         cursor.close();
     }
 
-    public void testUpdate() {
-        // Add a record
-        ContentValues testValues = TestDb.getLocationContentValues(LOCATION_THREE);
+    // Since we want each test to start with a clean slate, run deleteAllRecords
+    // in setUp (called by the test runner before each test).
+    public void setUp() {
+        deleteAllRecords();
+    }
 
-        Uri returnUri = mContext.getContentResolver().insert(LocationEntry.CONTENT_URI, testValues);
-        long locationRowId = ContentUris.parseId(returnUri);
+    public void testUpdateLocation() {
+        // Create a new map of values, where column names are the keys
+        ContentValues values = TestDb.getLocationContentValues();
+
+        Uri locationUri = mContext.getContentResolver().
+                insert(LocationEntry.CONTENT_URI, values);
+        long locationRowId = ContentUris.parseId(locationUri);
 
         // Verify we got a row back.
         assertTrue(locationRowId != -1);
         Log.d(LOG_TAG, "New row id: " + locationRowId);
 
-        // Now that we have a location, add some weather!
-        ContentValues weatherValues = TestDb.getWeatherContentValues(locationRowId);
+        ContentValues updatedValues = new ContentValues(values);
+        updatedValues.put(LocationEntry._ID, locationRowId);
+        updatedValues.put(LocationEntry.COLUMN_CITY_NAME, "Santa's Village");
 
-        Uri weatherUri = mContext.getContentResolver().insert(WeatherEntry.CONTENT_URI, weatherValues);
-        ContentUris.parseId(weatherUri);
+        int count = mContext.getContentResolver().update(
+                LocationEntry.CONTENT_URI, updatedValues, LocationEntry._ID + "= ?",
+                new String[] { Long.toString(locationRowId)});
 
-        ContentValues locationUpdate = new ContentValues();
-        locationUpdate.put(LocationEntry.COLUMN_CITY_NAME, "South Pole");
+        assertEquals(count, 1);
 
-        // Now update the records
-        mContext.getContentResolver().update(
-                WeatherEntry.buildWeatherLocation(LOCATION_THREE),
-                locationUpdate,
-                null, // cols for "where" clause
-                null // values for "where" clause
-        );
-
-        ContentValues weatherUpdate = new ContentValues();
-        weatherUpdate.put(WeatherEntry.COLUMN_SHORT_DESC, "Meteors");
-
-        mContext.getContentResolver().update(
-                LocationEntry.buildLocationUri(locationRowId),
-                weatherUpdate,
-                null, // cols for "where" clause
-                null // values for "where" clause
-        );
-
-        // Test the updates
+        // A cursor is your primary interface to the query results.
         Cursor cursor = mContext.getContentResolver().query(
                 LocationEntry.buildLocationUri(locationRowId),
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // sort order
+                null,
+                null, // Columns for the "where" clause
+                null, // Values for the "where" clause
+                null // sort order
         );
 
-        assertTrue(cursor.moveToFirst());
-        int i = cursor.getColumnIndex(LocationEntry.COLUMN_CITY_NAME);
-        String city = cursor.getString(i);
-        assertEquals("South Pole", city);
-        cursor.close();
+        TestDb.validateCursor(cursor, updatedValues);
+    }
 
-        cursor = mContext.getContentResolver().query(
-                WeatherEntry.buildWeatherLocation(LOCATION_THREE),  // Table to Query
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // columns to group by
+    // Make sure we can still delete after adding/updating stuff
+    public void testDeleteRecordsAtEnd() {
+        deleteAllRecords();
+    }
+
+    static ContentValues createKalamazooWeatherValues(long locationRowId) {
+        ContentValues weatherValues = new ContentValues();
+        weatherValues.put(WeatherEntry.COLUMN_LOC_KEY, locationRowId);
+        weatherValues.put(WeatherEntry.COLUMN_DATETEXT, KALAMAZOO_WEATHER_START_DATE);
+        weatherValues.put(WeatherEntry.COLUMN_DEGREES, 1.2);
+        weatherValues.put(WeatherEntry.COLUMN_HUMIDITY, 1.5);
+        weatherValues.put(WeatherEntry.COLUMN_PRESSURE, 1.1);
+        weatherValues.put(WeatherEntry.COLUMN_MAX_TEMP, 85);
+        weatherValues.put(WeatherEntry.COLUMN_MIN_TEMP, 35);
+        weatherValues.put(WeatherEntry.COLUMN_SHORT_DESC, "Cats and Dogs");
+        weatherValues.put(WeatherEntry.COLUMN_WIND_SPEED, 3.4);
+        weatherValues.put(WeatherEntry.COLUMN_WEATHER_ID, 42);
+
+        return weatherValues;
+    }
+
+    static ContentValues createKalamazooLocationValues() {
+        // Create a new map of values, where column names are the keys
+        ContentValues testValues = new ContentValues();
+        testValues.put(LocationEntry.COLUMN_LOCATION_SETTING, KALAMAZOO_LOCATION_SETTING);
+        testValues.put(LocationEntry.COLUMN_CITY_NAME, "Kalamazoo");
+        testValues.put(LocationEntry.COLUMN_COORD_LAT, 42.2917);
+        testValues.put(LocationEntry.COLUMN_COORD_LONG, -85.5872);
+
+        return testValues;
+    }
+
+
+    // Inserts both the location and weather data for the Kalamazoo data set.
+    public void insertKalamazooData() {
+        ContentValues kalamazooLocationValues = createKalamazooLocationValues();
+        Uri locationInsertUri = mContext.getContentResolver()
+                .insert(LocationEntry.CONTENT_URI, kalamazooLocationValues);
+        assertTrue(locationInsertUri != null);
+
+        locationRowId = ContentUris.parseId(locationInsertUri);
+
+        ContentValues kalamazooWeatherValues = createKalamazooWeatherValues(locationRowId);
+        Uri weatherInsertUri = mContext.getContentResolver()
+                .insert(WeatherEntry.CONTENT_URI, kalamazooWeatherValues);
+        assertTrue(weatherInsertUri != null);
+    }
+
+    public void testUpdateAndReadWeather() {
+        insertKalamazooData();
+        String newDescription = "Cats and Frogs (don't warn the tadpoles!)";
+
+        // Make an update to one value.
+        ContentValues kalamazooUpdate = new ContentValues();
+        kalamazooUpdate.put(WeatherEntry.COLUMN_SHORT_DESC, newDescription);
+
+        mContext.getContentResolver().update(
+                WeatherEntry.CONTENT_URI, kalamazooUpdate, null, null);
+
+        // A cursor is your primary interface to the query results.
+        Cursor weatherCursor = mContext.getContentResolver().query(
+                WeatherEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
         );
 
-        assertTrue(cursor.moveToFirst());
-        i = cursor.getColumnIndex(WeatherEntry.COLUMN_SHORT_DESC);
-        String desc = cursor.getString(i);
-        assertEquals("Meteors", desc);
-        cursor.close();
+        // Make the same update to the full ContentValues for comparison.
+        ContentValues kalamazooAltered = createKalamazooWeatherValues(locationRowId);
+        kalamazooAltered.put(WeatherEntry.COLUMN_SHORT_DESC, newDescription);
+
+        TestDb.validateCursor(weatherCursor, kalamazooAltered);
+    }
+
+    public void testRemoveHumidityAndReadWeather() {
+        insertKalamazooData();
+
+        mContext.getContentResolver().delete(WeatherEntry.CONTENT_URI,
+                WeatherEntry.COLUMN_HUMIDITY + " = " + locationRowId, null);
+
+        // A cursor is your primary interface to the query results.
+        Cursor weatherCursor = mContext.getContentResolver().query(
+                WeatherEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Make the same update to the full ContentValues for comparison.
+        ContentValues kalamazooAltered = createKalamazooWeatherValues(locationRowId);
+        kalamazooAltered.remove(WeatherEntry.COLUMN_HUMIDITY);
+
+        TestDb.validateCursor(weatherCursor, kalamazooAltered);
     }
 
     public void testGetType() {

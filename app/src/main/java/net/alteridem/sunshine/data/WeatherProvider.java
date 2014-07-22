@@ -18,7 +18,7 @@ public class WeatherProvider extends ContentProvider {
     private static final int LOCATION = 300;
     private static final int LOCATION_ID = 301;
 
-    private static UriMatcher mUriMatcher = buildUriMatcher();
+    private static UriMatcher sUriMatcher = buildUriMatcher();
     private WeatherDbHelper mOpenHelper;
 
     private static final SQLiteQueryBuilder sWeatherByLocationSettingQueryBuilder;
@@ -55,7 +55,7 @@ public class WeatherProvider extends ContentProvider {
         // Here's the switch statement that, given a URI, will determine what kind of request it is,
         // and query the database accordingly.
         Cursor retCursor;
-        switch (mUriMatcher.match(uri)) {
+        switch (sUriMatcher.match(uri)) {
         // "weather/*/*"
         case WEATHER_WITH_LOCATION_AND_DATE: {
             retCursor = getWeatherByLocationAndDateSetting(uri, projection, sortOrder);
@@ -114,7 +114,7 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        final int match = mUriMatcher.match(uri);
+        final int match = sUriMatcher.match(uri);
         switch (match) {
             case WEATHER_WITH_LOCATION_AND_DATE:
                 return WeatherContract.WeatherEntry.CONTENT_ITEM_TYPE;
@@ -132,7 +132,7 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        final int match = mUriMatcher.match(uri);
+        final int match = sUriMatcher.match(uri);
         Uri returnUri;
         switch (match) {
             case WEATHER: {
@@ -148,7 +148,7 @@ public class WeatherProvider extends ContentProvider {
                 SQLiteDatabase db = mOpenHelper.getWritableDatabase();
                 long id = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, values);
                 if (id > 0)
-                    returnUri = WeatherContract.WeatherEntry.buildWeatherUri(id);
+                    returnUri = WeatherContract.LocationEntry.buildLocationUri(id);
                 else
                     throw new SQLException("Failed to insert row into " + uri);
                 break;
@@ -163,12 +163,50 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsDeleted;
+        switch (match) {
+            case WEATHER:
+                rowsDeleted = db.delete(
+                        WeatherContract.WeatherEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case LOCATION:
+                rowsDeleted = db.delete(
+                        WeatherContract.LocationEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        // Because a null deletes all rows
+        if (selection == null || rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int rowsUpdated;
+
+        switch (match) {
+            case WEATHER:
+                rowsUpdated = db.update(WeatherContract.WeatherEntry.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
+            case LOCATION:
+                rowsUpdated =  db.update(WeatherContract.LocationEntry.TABLE_NAME, values, selection,
+                        selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
     }
 
     private static UriMatcher buildUriMatcher() {
