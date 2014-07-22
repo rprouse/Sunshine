@@ -1,8 +1,9 @@
 package net.alteridem.sunshine.test;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
@@ -21,15 +22,10 @@ public class TestProvider extends AndroidTestCase {
 
     public void testInsertReadProvider() throws Throwable {
 
-        // If there's an error in those massive SQL table creation Strings,
-        // errors will be thrown here when you try to get a writable database.
-        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         ContentValues testValues = TestDb.getLocationContentValues();
 
-        long locationRowId;
-        locationRowId = db.insert(LocationEntry.TABLE_NAME, null, testValues);
+        Uri returnUri = mContext.getContentResolver().insert(LocationEntry.CONTENT_URI, testValues);
+        long locationRowId = ContentUris.parseId(returnUri);
 
         // Verify we got a row back.
         assertTrue(locationRowId != -1);
@@ -63,8 +59,8 @@ public class TestProvider extends AndroidTestCase {
         // Fantastic.  Now that we have a location, add some weather!
         ContentValues weatherValues = TestDb.getWeatherContentValues(locationRowId);
 
-        long weatherRowId = db.insert(WeatherEntry.TABLE_NAME, null, weatherValues);
-        assertTrue(weatherRowId != -1);
+        Uri weatherUri = mContext.getContentResolver().insert(WeatherEntry.CONTENT_URI, weatherValues);
+        ContentUris.parseId(weatherUri);
 
         // A cursor is your primary interface to the query results.
         Cursor weatherCursor = mContext.getContentResolver().query(
@@ -109,8 +105,6 @@ public class TestProvider extends AndroidTestCase {
         );
 
         TestDb.validateCursor(weatherCursor, weatherValues);
-
-        dbHelper.close();
     }
 
     public void testGetType() {
