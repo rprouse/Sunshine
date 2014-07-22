@@ -47,10 +47,13 @@ public class TestDb extends AndroidTestCase {
         return rowId;
     }
 
-    private ContentValues getWeatherContentValues(long rowId) {
+    public static final String DATETEXT = "20141205";
+    public static final String LOCATION_SETTING = "99705";
+
+    public static ContentValues getWeatherContentValues(long rowId) {
         ContentValues values = new ContentValues();
         values.put(WeatherEntry.COLUMN_LOC_KEY, rowId);
-        values.put(WeatherEntry.COLUMN_DATETEXT, "20141205");
+        values.put(WeatherEntry.COLUMN_DATETEXT, DATETEXT);
         values.put(WeatherEntry.COLUMN_DEGREES, 1.1);
         values.put(WeatherEntry.COLUMN_HUMIDITY, 1.2);
         values.put(WeatherEntry.COLUMN_PRESSURE, 1.3);
@@ -62,16 +65,16 @@ public class TestDb extends AndroidTestCase {
         return values;
     }
 
-    private ContentValues getLocationContentValues() {
+    public static ContentValues getLocationContentValues() {
         ContentValues values = new ContentValues();
-        values.put(LocationEntry.COLUMN_LOCATION_SETTING, "99705");
+        values.put(LocationEntry.COLUMN_LOCATION_SETTING, LOCATION_SETTING);
         values.put(LocationEntry.COLUMN_CITY_NAME, "North Pole");
         values.put(LocationEntry.COLUMN_COORD_LAT, 64.7488);
         values.put(LocationEntry.COLUMN_COORD_LONG, -147.353);
         return values;
     }
 
-    static void validateCursor(Cursor valueCursor, ContentValues expectedValues) {
+    public static void validateCursor(Cursor valueCursor, ContentValues expectedValues) {
 
         assertTrue(valueCursor.moveToFirst());
 
