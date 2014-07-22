@@ -1,4 +1,4 @@
-package net.alteridem.sunshine;
+package net.alteridem.sunshine.test;
 
 import android.content.ContentValues;
 import android.database.Cursor;
