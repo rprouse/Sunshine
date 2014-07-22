@@ -28,31 +28,23 @@ public class TestDb extends AndroidTestCase {
         WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Insert
-        ContentValues values = getLocationContentValues();
+        // Location
+        long rowId = testInsertReadDb(db, getLocationContentValues(), LocationEntry.TABLE_NAME);
 
-        long rowId = db.insert(LocationEntry.TABLE_NAME, null, values);
-
-        assertTrue(rowId != -1);
-        Log.d(LOG_TAG, "New row id: " + rowId);
-
-        Cursor cursor = db.query( LocationEntry.TABLE_NAME, null, null, null, null, null, null );
-
-        validateCursor(cursor, values);
-
-        // Fantastic.  Now that we have a location, add some weather!
-        values = getWeatherContentValues(rowId);
-
-        rowId = db.insert(WeatherEntry.TABLE_NAME, null, values);
-
-        assertTrue(rowId != -1);
-        Log.d(LOG_TAG, "New row id: " + rowId);
-
-        cursor = db.query( WeatherEntry.TABLE_NAME, null, null, null, null, null, null );
-
-        validateCursor(cursor, values);
+        // Weather
+        testInsertReadDb(db, getWeatherContentValues(rowId), WeatherEntry.TABLE_NAME);
 
         dbHelper.close();
+    }
+
+    private long testInsertReadDb(SQLiteDatabase db, ContentValues values, String table)
+            throws Throwable {
+        long rowId = db.insert(table, null, values);
+        assertTrue(rowId != -1);
+        Log.d(LOG_TAG, "New row id: " + rowId);
+        Cursor cursor = db.query( table, null, null, null, null, null, null );
+        validateCursor(cursor, values);
+        return rowId;
     }
 
     private ContentValues getWeatherContentValues(long rowId) {
