@@ -1,6 +1,5 @@
 package net.alteridem.sunshine;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,12 +17,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import net.alteridem.sunshine.data.WeatherContract;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -32,7 +30,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
-    ArrayAdapter<String> _adapter;
+    SimpleCursorAdapter _adapter;
     View _rootView;
 
     private static final int FORECAST_LOADER = 0;
@@ -79,21 +77,34 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         setHasOptionsMenu(true);
         _rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        _adapter = new ArrayAdapter<String>(
+        _adapter = new SimpleCursorAdapter(
                 getActivity(),
                 R.layout.list_item_forecast,
-                R.id.list_item_forecast_textview,
-                new ArrayList<String>() );
+                null,
+                new String[] {
+                        WeatherContract.WeatherEntry.COLUMN_DATETEXT,
+                        WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
+                        WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+                        WeatherContract.WeatherEntry.COLUMN_MIN_TEMP
+                },
+                new int[] {
+                        R.id.list_item_date_textview,
+                        R.id.list_item_forecast_textview,
+                        R.id.list_item_high_textview,
+                        R.id.list_item_low_textview
+                },
+                0
+        );
 
         ListView listView = (ListView)_rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(_adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String forecast = _adapter.getItem(position);
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                    .putExtra(Intent.EXTRA_TEXT, forecast);
-                getActivity().startActivity(intent);
+//                String forecast = _adapter.getItem(position);
+//                Intent intent = new Intent(getActivity(), DetailActivity.class)
+//                    .putExtra(Intent.EXTRA_TEXT, forecast);
+//                getActivity().startActivity(intent);
             }
         });
 
@@ -150,11 +161,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-
+        _adapter.swapCursor(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        _adapter.swapCursor(null);
     }
 }
