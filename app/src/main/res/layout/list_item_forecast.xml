@@ -1,10 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView  xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:textAppearance="?android:attr/textAppearanceLarge"
-    android:text="Today - Sunny - 21° / 14°"
-    android:id="@+id/list_item_forecast_textview"
     android:paddingLeft="16dp"
-    android:gravity="center_vertical" />
+    android:paddingRight="16dp"
+    android:gravity="center_vertical" >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Today"
+        android:id="@+id/list_item_date_textview"
+        android:layout_alignParentLeft="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="-"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:id="@+id/list_item_forecast_separator"
+        android:layout_toRightOf="@+id/list_item_date_textview" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Sunny"
+        android:id="@+id/list_item_forecast_textview"
+        android:layout_toRightOf="@+id/list_item_forecast_separator" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="21°"
+        android:id="@+id/list_item_high_textview"
+        android:layout_toLeftOf="@+id/list_item_temp_separator" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="/"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:id="@+id/list_item_temp_separator"
+        android:layout_toLeftOf="@+id/list_item_low_textview" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="14°"
+        android:id="@+id/list_item_low_textview"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/list_item_high_textview" />
+</RelativeLayout>
