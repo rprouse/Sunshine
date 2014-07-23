@@ -20,6 +20,9 @@
     <string name="pref_units_key" translatable="false">units</string>
     <string name="pref_units_default" translatable="false">metric</string>
     <string name="action_share">Share</string>
+    <string name="fragement_detail_humidity">Humidity:</string>
+    <string name="fragement_detail_wind">Wind:</string>
+    <string name="fragement_detail_pressure">Pressure:</string>
     <string-array name="pref_units_list_titles">
         <item>Metric</item>
         <item>Imperial</item>

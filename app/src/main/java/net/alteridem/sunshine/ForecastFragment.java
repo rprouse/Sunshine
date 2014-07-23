@@ -28,7 +28,8 @@ import java.util.Date;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ForecastFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
@@ -124,18 +125,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                boolean isMetric = Utility.isMetric(getActivity());
                 SimpleCursorAdapter adapter = (SimpleCursorAdapter)parent.getAdapter();
                 Cursor cursor = adapter.getCursor();
                 if(cursor != null && cursor.moveToPosition(position)) {
-                    String date = Utility.formatDate(cursor.getString(COL_WEATHER_DATE));
-                    String desc = cursor.getString(COL_WEATHER_DESC);
-                    String min = Utility.formatTemperature(cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
-                    String max = Utility.formatTemperature(cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
-
-                    String forecast = String.format("%s - %s %s / %s", date, desc, min, max);
+                    String date = cursor.getString(COL_WEATHER_DATE);
                     Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .putExtra(Intent.EXTRA_TEXT, forecast);
+                            .putExtra(Intent.EXTRA_TEXT, date);
                     getActivity().startActivity(intent);
                 }
             }
