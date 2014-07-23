@@ -30,9 +30,12 @@ public class WeatherDetailFragment extends Fragment
 
     private static final String LOG_TAG = WeatherDetailFragment.class.getSimpleName();
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
+    private static final String LOCATION_KEY = "location";
     private String mDate;
 
     private static final int DETAILS_LOADER = 1;
+    private String mLocation;
+    private String mForecast;
 
     // For the forecast view we're showing only a small subset of the stored data.
     // Specify the columns we need.
@@ -68,14 +71,6 @@ public class WeatherDetailFragment extends Fragment
     public static final int COL_WEATHER_DIRECTION = 8;
     public static final int COL_WEATHER_PRESSURE = 9;
 
-    private TextView mDateTextView;
-    private TextView mDescriptionTextView;
-    private TextView mMin;
-    private TextView mMax;
-    private TextView mHumidity;
-    private TextView mWind;
-    private TextView mPressure;
-
     public WeatherDetailFragment() {
         setHasOptionsMenu(true);
     }
@@ -83,6 +78,9 @@ public class WeatherDetailFragment extends Fragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null && savedInstanceState.containsKey(LOCATION_KEY)) {
+            mLocation = savedInstanceState.getString(LOCATION_KEY);
+        }
         getLoaderManager().initLoader(DETAILS_LOADER, null, this);
     }
 
@@ -91,13 +89,6 @@ public class WeatherDetailFragment extends Fragment
             Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        mDateTextView = (TextView)rootView.findViewById(R.id.fragment_detail_date);
-        mDescriptionTextView = (TextView)rootView.findViewById(R.id.fragment_detail_description);
-        mMax = (TextView)rootView.findViewById(R.id.fragment_detail_max);
-        mMin = (TextView)rootView.findViewById(R.id.fragment_detail_min);
-        mHumidity = (TextView)rootView.findViewById(R.id.fragment_detail_humidity);
-        mWind = (TextView)rootView.findViewById(R.id.fragment_detail_wind);
-        mPressure = (TextView)rootView.findViewById(R.id.fragment_detail_pressure);
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             mDate = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -106,9 +97,19 @@ public class WeatherDetailFragment extends Fragment
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(LOCATION_KEY, mLocation);
+    }
+
+
+
+    @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
+        if( mLocation != null && !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
+            getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
+        }
     }
 
     @Override
@@ -130,14 +131,14 @@ public class WeatherDetailFragment extends Fragment
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        intent.putExtra(Intent.EXTRA_TEXT, mDate + FORECAST_SHARE_HASHTAG);
+        intent.putExtra(Intent.EXTRA_TEXT, mForecast + FORECAST_SHARE_HASHTAG);
         return intent;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        String location = Utility.getPreferredLocation(getActivity());
-        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(location, mDate);
+        mLocation = Utility.getPreferredLocation(getActivity());
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation, mDate);
 
         Log.d(LOG_TAG, "Uri: " + weatherForLocationUri.toString());
 
@@ -154,27 +155,34 @@ public class WeatherDetailFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         if(cursor.moveToFirst()) {
+            TextView dateTextView = (TextView)getView().findViewById(R.id.fragment_detail_date);
+            TextView descriptionTextView = (TextView)getView().findViewById(R.id.fragment_detail_description);
+            TextView maxTextView = (TextView)getView().findViewById(R.id.fragment_detail_max);
+            TextView minTextView = (TextView)getView().findViewById(R.id.fragment_detail_min);
+            TextView humidityTextView = (TextView)getView().findViewById(R.id.fragment_detail_humidity);
+            TextView windTextView = (TextView)getView().findViewById(R.id.fragment_detail_wind);
+            TextView pressureTextView = (TextView)getView().findViewById(R.id.fragment_detail_pressure);
+
             boolean isMetric = Utility.isMetric(getActivity());
+            String date = Utility.formatDate(cursor.getString(COL_WEATHER_DATE));
+            String desc = cursor.getString(COL_WEATHER_DESC);
+            String low = Utility.formatTemperature(cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+            String high = Utility.formatTemperature(cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+
             getActivity().setTitle(cursor.getString(COL_WEATHER_CITY));
-            mDateTextView.setText(Utility.formatDate(cursor.getString(COL_WEATHER_DATE)));
-            mDescriptionTextView.setText(cursor.getString(COL_WEATHER_DESC));
-            mMax.setText(Utility.formatTemperature(cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric));
-            mMin.setText(Utility.formatTemperature(cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric));
-            mHumidity.setText(Utility.formatHumidity(cursor.getDouble(COL_WEATHER_HUMIDITY)));
-            mWind.setText(Utility.formatWind(cursor.getDouble(COL_WEATHER_WIND), isMetric, cursor.getDouble(COL_WEATHER_DIRECTION)));
-            mPressure.setText(Utility.formatPressure(cursor.getDouble(COL_WEATHER_PRESSURE), isMetric));
+            dateTextView.setText(date);
+            descriptionTextView.setText(desc);
+            maxTextView.setText(high);
+            minTextView.setText(low);
+            humidityTextView.setText(Utility.formatHumidity(cursor.getDouble(COL_WEATHER_HUMIDITY)));
+            windTextView.setText(Utility.formatWind(cursor.getDouble(COL_WEATHER_WIND), isMetric, cursor.getDouble(COL_WEATHER_DIRECTION)));
+            pressureTextView.setText(Utility.formatPressure(cursor.getDouble(COL_WEATHER_PRESSURE), isMetric));
+
+            mForecast = String.format("%s - %s - %s/%s", date, desc, high, low);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        getActivity().setTitle("");
-        mDateTextView.setText("");
-        mDescriptionTextView.setText("");
-        mMax.setText("");
-        mMin.setText("");
-        mHumidity.setText("");
-        mWind.setText("");
-        mPressure.setText("");
     }
 }
