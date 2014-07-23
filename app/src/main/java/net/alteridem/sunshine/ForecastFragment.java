@@ -1,5 +1,6 @@
 package net.alteridem.sunshine;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import net.alteridem.sunshine.data.WeatherContract;
 
@@ -96,15 +98,36 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 0
         );
 
+        _adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Cursor cursor, int i) {
+                boolean isMetric = Utility.isMetric(getActivity());
+                switch (i) {
+                    case COL_WEATHER_MAX_TEMP:
+                    case COL_WEATHER_MIN_TEMP: {
+                        ((TextView) view).setText(Utility.formatTemperature(cursor.getDouble(i), isMetric));
+                        return true;
+                    }
+                        case COL_WEATHER_DATE: {
+                            String dateString = cursor.getString(i);
+                            TextView dateView = (TextView)view;
+                            dateView.setText(Utility.formatDate(dateString));
+                            return true;
+                        }
+                }
+                return false;
+            }
+        });
+
         ListView listView = (ListView)_rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(_adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                String forecast = _adapter.getItem(position);
-//                Intent intent = new Intent(getActivity(), DetailActivity.class)
-//                    .putExtra(Intent.EXTRA_TEXT, forecast);
-//                getActivity().startActivity(intent);
+                //String forecast = _adapter.getItem(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                    .putExtra(Intent.EXTRA_TEXT, "placeholder");
+                getActivity().startActivity(intent);
             }
         });
 
@@ -162,6 +185,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         _adapter.swapCursor(cursor);
+        if ( !mLocation.equals(Utility.getPreferredLocation(getActivity())) ) {
+            getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+        }
     }
 
     @Override
