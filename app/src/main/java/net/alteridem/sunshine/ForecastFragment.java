@@ -32,8 +32,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
-    SimpleCursorAdapter _adapter;
-    View _rootView;
+    SimpleCursorAdapter mAdapter;
+    View mRootView;
 
     private static final int FORECAST_LOADER = 0;
     private String mLocation;
@@ -77,9 +77,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        _rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        _adapter = new SimpleCursorAdapter(
+        mAdapter = new SimpleCursorAdapter(
                 getActivity(),
                 R.layout.list_item_forecast,
                 null,
@@ -98,7 +98,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 0
         );
 
-        _adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+        mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Cursor cursor, int i) {
                 boolean isMetric = Utility.isMetric(getActivity());
@@ -108,19 +108,19 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                         ((TextView) view).setText(Utility.formatTemperature(cursor.getDouble(i), isMetric));
                         return true;
                     }
-                        case COL_WEATHER_DATE: {
-                            String dateString = cursor.getString(i);
-                            TextView dateView = (TextView)view;
-                            dateView.setText(Utility.formatDate(dateString));
-                            return true;
-                        }
+                    case COL_WEATHER_DATE: {
+                        String dateString = cursor.getString(i);
+                        TextView dateView = (TextView) view;
+                        dateView.setText(Utility.formatDate(dateString));
+                        return true;
+                    }
                 }
                 return false;
             }
         });
 
-        ListView listView = (ListView)_rootView.findViewById(R.id.listview_forecast);
-        listView.setAdapter(_adapter);
+        ListView listView = (ListView) mRootView.findViewById(R.id.listview_forecast);
+        listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -140,13 +140,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             }
         });
-        return _rootView;
+        return mRootView;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        updateWeather();
     }
 
     @Override
@@ -193,7 +192,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        _adapter.swapCursor(cursor);
+        mAdapter.swapCursor(cursor);
         if ( !mLocation.equals(Utility.getPreferredLocation(getActivity())) ) {
             getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
         }
@@ -201,6 +200,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        _adapter.swapCursor(null);
+        mAdapter.swapCursor(null);
     }
 }
