@@ -149,6 +149,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (mLocation != null && !Utility.getPreferredLocation(getActivity()).equals(mLocation)) {
+            //updateWeather();
+            getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.forecast_fragment, menu);
     }
