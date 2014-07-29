@@ -1,62 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="16dp"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
     android:gravity="center_vertical" >
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        tools:text="Today"
-        android:id="@+id/list_item_date_textview"
-        android:layout_alignParentLeft="true" />
 
-    <TextView
+    <ImageView
+        android:id="@+id/list_item_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="-"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:id="@+id/list_item_forecast_separator"
-        android:layout_toRightOf="@+id/list_item_date_textview" />
+        tools:src="@drawable/ic_launcher"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        tools:text="Sunny"
-        android:id="@+id/list_item_forecast_textview"
-        android:layout_toRightOf="@+id/list_item_forecast_separator" />
+        android:orientation="vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_weight="1">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        tools:text="21°"
-        android:id="@+id/list_item_high_textview"
-        android:layout_toLeftOf="@+id/list_item_temp_separator" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="Today"
+            android:id="@+id/list_item_date_textview" />
 
-    <TextView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            tools:text="Sunny"
+            android:id="@+id/list_item_forecast_textview" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="/"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:id="@+id/list_item_temp_separator"
-        android:layout_toLeftOf="@+id/list_item_low_textview" />
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:text="21°"
+        android:id="@+id/list_item_high_textview" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         tools:text="14°"
-        android:id="@+id/list_item_low_textview"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@+id/list_item_high_textview" />
-</RelativeLayout>
+        android:id="@+id/list_item_low_textview" />
+
+    </LinearLayout>
+</LinearLayout>

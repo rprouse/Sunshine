@@ -32,8 +32,10 @@
             android:parentActivityName=".MainActivity" >
         </activity>
         <provider
+            android:name=".data.WeatherProvider"
             android:authorities="net.alteridem.sunshine"
-            android:name=".data.WeatherProvider" />
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
