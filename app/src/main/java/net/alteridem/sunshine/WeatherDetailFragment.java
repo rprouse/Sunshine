@@ -173,7 +173,7 @@ public class WeatherDetailFragment extends Fragment
             String high = Utility.formatTemperature(getActivity(), cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
 
             getActivity().setTitle(cursor.getString(COL_WEATHER_CITY));
-            iconView.setImageResource(R.drawable.ic_launcher);
+            iconView.setImageResource(R.drawable.art_clear);
             friendlyDateTextView.setText(Utility.getDayName(getActivity(), date));
             dateTextView.setText(Utility.getFormattedMonthDay(getActivity(), date));
             descriptionTextView.setText(desc);
