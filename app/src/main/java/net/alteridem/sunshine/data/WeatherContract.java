@@ -20,6 +20,7 @@ public class WeatherContract {
 
     /**
      * Converts Date class to a string representation for storing in the database
+     *
      * @param date The input date
      * @return A DB-friendly representation of the date using the format specified in DATE_FORMAT
      */
@@ -28,11 +29,11 @@ public class WeatherContract {
         return sdf.format(date);
     }
 
-    public static Date getDbDateString(String dateString) {
+    public static Date getDateFromDb(String dateString) {
         SimpleDateFormat dbDateFormat = new SimpleDateFormat(DATE_FORMAT);
         try {
             return dbDateFormat.parse(dateString);
-        } catch ( ParseException e ) {
+        } catch (ParseException e) {
             e.printStackTrace();
             return null;
         }
