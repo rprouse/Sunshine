@@ -166,8 +166,8 @@ public class WeatherDetailFragment extends Fragment
             boolean isMetric = Utility.isMetric(getActivity());
             String date = Utility.formatDate(cursor.getString(COL_WEATHER_DATE));
             String desc = cursor.getString(COL_WEATHER_DESC);
-            String low = Utility.formatTemperature(cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
-            String high = Utility.formatTemperature(cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+            String low = Utility.formatTemperature(getActivity(), cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+            String high = Utility.formatTemperature(getActivity(), cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
 
             getActivity().setTitle(cursor.getString(COL_WEATHER_CITY));
             dateTextView.setText(date);

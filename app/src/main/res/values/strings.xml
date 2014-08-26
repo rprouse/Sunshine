@@ -43,4 +43,9 @@
         <xliff:g id="day_of_week">%1$s</xliff:g>, <xliff:g id="date">%2$s</xliff:g>
     </string>
 
+    <!-- Temperature formatting -->
+    <string name="format_temperature">
+        <xliff:g id="temperature">%1$.0f</xliff:g><xliff:g id="degrees">\u00B0</xliff:g>
+    </string>
+
 </resources>

@@ -27,11 +27,11 @@ public class Utility {
         return sharedPreferences.getString(context.getString(resourceId), context.getString(defaultValueId));
     }
 
-    public static String formatTemperature(double temp, boolean isMetric) {
+    public static String formatTemperature(Context context, double temp, boolean isMetric) {
         if (!isMetric) {
             temp = 9 * temp / 5 + 32;
         }
-        return String.format("%.0f°", temp);
+        return context.getString(R.string.format_temperature, temp);
     }
 
     public static String formatDate(String dateString) {
