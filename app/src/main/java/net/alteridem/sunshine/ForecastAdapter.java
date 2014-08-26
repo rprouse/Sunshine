@@ -6,8 +6,6 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 public class ForecastAdapter extends CursorAdapter {
     private final int VIEW_TYPE_TODAY = 0;
@@ -45,19 +43,16 @@ public class ForecastAdapter extends CursorAdapter {
 
         boolean isMetric = Utility.isMetric(context);
 
-        ImageView iconView = (ImageView) view.findViewById(R.id.list_item_icon);
-        iconView.setImageResource(R.drawable.ic_launcher);
-
-        setTextView(view, R.id.list_item_date_textview, Utility.getFriendlyDayString(context, date));
-        setTextView(view, R.id.list_item_forecast_textview, desc);
-        setTextView(view, R.id.list_item_high_textview, Utility.formatTemperature(high, isMetric));
-        setTextView(view, R.id.list_item_low_textview, Utility.formatTemperature(low, isMetric));
-    }
-
-    private void setTextView(View view, int id, String text) {
-        TextView textView = (TextView) view.findViewById(id);
-        if (textView != null) {
-            textView.setText(text);
+        ForecastItemViewHolder viewHolder = (ForecastItemViewHolder) view.getTag();
+        if (viewHolder == null) {
+            viewHolder = new ForecastItemViewHolder(view);
+            view.setTag(viewHolder);
         }
+
+        viewHolder.iconView.setImageResource(R.drawable.ic_launcher);
+        viewHolder.dateView.setText(Utility.getFriendlyDayString(context, date));
+        viewHolder.descriptionView.setText(desc);
+        viewHolder.highView.setText(Utility.formatTemperature(high, isMetric));
+        viewHolder.lowView.setText(Utility.formatTemperature(low, isMetric));
     }
 }
