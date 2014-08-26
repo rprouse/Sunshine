@@ -19,7 +19,9 @@ public class ForecastAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         int viewType = getItemViewType(cursor.getPosition());
         int layoutId = viewType == VIEW_TYPE_TODAY ? R.layout.list_item_forecast_today : R.layout.list_item_forecast;
-        return LayoutInflater.from(context).inflate(layoutId, parent, false);
+        View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
+        view.setTag(new ForecastItemViewHolder(view));
+        return view;
     }
 
     @Override
@@ -44,10 +46,6 @@ public class ForecastAdapter extends CursorAdapter {
         boolean isMetric = Utility.isMetric(context);
 
         ForecastItemViewHolder viewHolder = (ForecastItemViewHolder) view.getTag();
-        if (viewHolder == null) {
-            viewHolder = new ForecastItemViewHolder(view);
-            view.setTag(viewHolder);
-        }
 
         viewHolder.iconView.setImageResource(R.drawable.ic_launcher);
         viewHolder.dateView.setText(Utility.getFriendlyDayString(context, date));
