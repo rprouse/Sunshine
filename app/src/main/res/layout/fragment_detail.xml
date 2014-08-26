@@ -3,9 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -16,8 +17,6 @@
             android:id="@+id/fragment_detail_friendly_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
             tools:text="Today" />
 
@@ -25,26 +24,20 @@
             android:id="@+id/fragment_detail_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/fragment_detail_friendly_date"
             android:paddingBottom="18dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="italic"
             tools:text="July 12" />
 
         <LinearLayout
-            android:id="@+id/fragment_detail_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fragment_detail_date"
             android:orientation="horizontal"
             android:paddingBottom="24dp">
 
             <LinearLayout
-                android:id="@+id/fragment_detail_lef_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fragment_detail_date"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:paddingBottom="24dp">
@@ -66,7 +59,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/fragment_detail_right_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -121,5 +113,5 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             tools:text="Pressure: 1014 hPa" />
 
-    </RelativeLayout>
+    </LinearLayout>
 </ScrollView>
