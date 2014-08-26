@@ -56,12 +56,13 @@ public class WeatherDetailFragment extends Fragment
             WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
             WeatherContract.WeatherEntry.COLUMN_DEGREES,
-            WeatherContract.WeatherEntry.COLUMN_PRESSURE
+            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
     // must change.
-    public static final int COL_WEATHER_ID = 0;
+    public static final int COL_ID = 0;
     public static final int COL_WEATHER_DATE = 1;
     public static final int COL_WEATHER_DESC = 2;
     public static final int COL_WEATHER_MAX_TEMP = 3;
@@ -71,6 +72,7 @@ public class WeatherDetailFragment extends Fragment
     public static final int COL_WEATHER_WIND = 7;
     public static final int COL_WEATHER_DIRECTION = 8;
     public static final int COL_WEATHER_PRESSURE = 9;
+    public static final int COL_WEATHER_ID = 10;
 
     public WeatherDetailFragment() {
         setHasOptionsMenu(true);
@@ -167,13 +169,14 @@ public class WeatherDetailFragment extends Fragment
             TextView pressureTextView = (TextView)getView().findViewById(R.id.fragment_detail_pressure);
 
             boolean isMetric = Utility.isMetric(getActivity());
+            int weatherId = cursor.getInt(COL_WEATHER_ID);
             String date = cursor.getString(COL_WEATHER_DATE);
             String desc = cursor.getString(COL_WEATHER_DESC);
             String low = Utility.formatTemperature(getActivity(), cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
             String high = Utility.formatTemperature(getActivity(), cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
 
             getActivity().setTitle(cursor.getString(COL_WEATHER_CITY));
-            iconView.setImageResource(R.drawable.art_clear);
+            iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
             friendlyDateTextView.setText(Utility.getDayName(getActivity(), date));
             dateTextView.setText(Utility.getFormattedMonthDay(getActivity(), date));
             descriptionTextView.setText(desc);
