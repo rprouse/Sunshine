@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.alteridem.sunshine.data.WeatherContract;
@@ -155,6 +156,7 @@ public class WeatherDetailFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         if(cursor.moveToFirst()) {
+            ImageView iconView = (ImageView) getView().findViewById(R.id.fragment_detail_icon);
             TextView friendlyDateTextView = (TextView) getView().findViewById(R.id.fragment_detail_friendly_date);
             TextView dateTextView = (TextView)getView().findViewById(R.id.fragment_detail_date);
             TextView descriptionTextView = (TextView)getView().findViewById(R.id.fragment_detail_description);
@@ -171,6 +173,7 @@ public class WeatherDetailFragment extends Fragment
             String high = Utility.formatTemperature(getActivity(), cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
 
             getActivity().setTitle(cursor.getString(COL_WEATHER_CITY));
+            iconView.setImageResource(R.drawable.ic_launcher);
             friendlyDateTextView.setText(Utility.getDayName(getActivity(), date));
             dateTextView.setText(Utility.getFormattedMonthDay(getActivity(), date));
             descriptionTextView.setText(desc);
