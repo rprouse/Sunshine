@@ -47,7 +47,7 @@ public class ForecastAdapter extends CursorAdapter {
 
         ForecastItemViewHolder viewHolder = (ForecastItemViewHolder) view.getTag();
 
-        if (cursor.getPosition() == 0)
+        if (getItemViewType(cursor.getPosition()) == VIEW_TYPE_TODAY)
             viewHolder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
         else
             viewHolder.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(weatherId));
