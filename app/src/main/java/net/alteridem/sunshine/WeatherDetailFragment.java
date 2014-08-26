@@ -155,6 +155,7 @@ public class WeatherDetailFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         if(cursor.moveToFirst()) {
+            TextView friendlyDateTextView = (TextView) getView().findViewById(R.id.fragment_detail_friendly_date);
             TextView dateTextView = (TextView)getView().findViewById(R.id.fragment_detail_date);
             TextView descriptionTextView = (TextView)getView().findViewById(R.id.fragment_detail_description);
             TextView maxTextView = (TextView)getView().findViewById(R.id.fragment_detail_max);
@@ -164,19 +165,20 @@ public class WeatherDetailFragment extends Fragment
             TextView pressureTextView = (TextView)getView().findViewById(R.id.fragment_detail_pressure);
 
             boolean isMetric = Utility.isMetric(getActivity());
-            String date = Utility.formatDate(cursor.getString(COL_WEATHER_DATE));
+            String date = cursor.getString(COL_WEATHER_DATE);
             String desc = cursor.getString(COL_WEATHER_DESC);
             String low = Utility.formatTemperature(getActivity(), cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
             String high = Utility.formatTemperature(getActivity(), cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
 
             getActivity().setTitle(cursor.getString(COL_WEATHER_CITY));
-            dateTextView.setText(date);
+            friendlyDateTextView.setText(Utility.getDayName(getActivity(), date));
+            dateTextView.setText(Utility.getFormattedMonthDay(getActivity(), date));
             descriptionTextView.setText(desc);
             maxTextView.setText(high);
             minTextView.setText(low);
-            humidityTextView.setText(Utility.formatHumidity(cursor.getDouble(COL_WEATHER_HUMIDITY)));
-            windTextView.setText(Utility.formatWind(cursor.getDouble(COL_WEATHER_WIND), isMetric, cursor.getDouble(COL_WEATHER_DIRECTION)));
-            pressureTextView.setText(Utility.formatPressure(cursor.getDouble(COL_WEATHER_PRESSURE), isMetric));
+            humidityTextView.setText(Utility.formatHumidity(getActivity(), cursor.getDouble(COL_WEATHER_HUMIDITY)));
+            windTextView.setText(Utility.formatWind(getActivity(), cursor.getDouble(COL_WEATHER_WIND), isMetric, cursor.getDouble(COL_WEATHER_DIRECTION)));
+            pressureTextView.setText(Utility.formatPressure(getActivity(), cursor.getDouble(COL_WEATHER_PRESSURE), isMetric));
 
             mForecast = String.format("%s - %s - %s/%s", date, desc, high, low);
         }

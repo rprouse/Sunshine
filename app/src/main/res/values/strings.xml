@@ -20,9 +20,6 @@
     <string name="pref_units_key" translatable="false">units</string>
     <string name="pref_units_default" translatable="false">metric</string>
     <string name="action_share">Share</string>
-    <string name="fragement_detail_humidity">Humidity:</string>
-    <string name="fragement_detail_wind">Wind:</string>
-    <string name="fragement_detail_pressure">Pressure:</string>
     <string-array name="pref_units_list_titles">
         <item>Metric</item>
         <item>Imperial</item>
@@ -39,13 +36,22 @@
     <string name="tomorrow">Tomorrow</string>
 
     <!-- Date format for displaying day of week and date (i.e. Mon Jun 1) [CHAR LIMIT=20] -->
-    <string name="format_full_friendly_date">
-        <xliff:g id="day_of_week">%1$s</xliff:g>, <xliff:g id="date">%2$s</xliff:g>
-    </string>
+    <string name="format_full_friendly_date"><xliff:g id="day_of_week">%1$s</xliff:g>, <xliff:g id="date">%2$s</xliff:g></string>
 
+    <!-- Strings for formatting weather-related data -->
     <!-- Temperature formatting -->
-    <string name="format_temperature">
-        <xliff:g id="temperature">%1$.0f</xliff:g><xliff:g id="degrees">\u00B0</xliff:g>
-    </string>
+    <string name="format_temperature"><xliff:g id="temperature">%1$.0f</xliff:g><xliff:g id="degrees">\u00B0</xliff:g></string>
 
+    <!-- Windspeed formats -->
+    <!-- Wind in mph [CHAR LIMIT=25] -->
+    <string name="format_wind_mph">Wind: <xliff:g id="speed">%1$1.0f</xliff:g> mph <xliff:g id="direction">%2$s</xliff:g></string>
+
+    <!-- Wind in kph [CHAR LIMIT=25] -->
+    <string name="format_wind_kmh">Wind: <xliff:g id="speed">%1$1.0f</xliff:g> km/h <xliff:g id="direction">%2$s</xliff:g></string>
+
+    <!-- Pressure format CHAR LIMIT=25] -->
+    <string name="format_pressure">Pressure: <xliff:g id="pressure">%1.0f</xliff:g> hPa</string>
+
+    <!-- Humidity format CHAR LIMIT=25]-->
+    <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
 </resources>

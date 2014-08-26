@@ -144,20 +144,20 @@ public class Utility {
         }
     }
 
-    public static String formatHumidity(double humidity) {
-        return String.format("%.0f%%", humidity);
+    public static String formatHumidity(Context context, double humidity) {
+        return context.getString(R.string.format_humidity, humidity);
     }
 
-    public static String formatWind(double speed, boolean isMetric, double angle) {
+    public static String formatWind(Context context, double speed, boolean isMetric, double angle) {
         String dir = formatDirection(angle);
         if (isMetric) {
-            return String.format("%.0f km/h %s", speed, dir);
+            return context.getString(R.string.format_wind_kmh, speed, dir);
         }
-        return String.format("%.0f mph %s", speed / 1.6, dir);
+        return context.getString(R.string.format_wind_mph, speed / 1.6, dir);
     }
 
-    public static String formatPressure(double pressure, boolean isMetric) {
-        return String.format("%.0f hPa", pressure);
+    public static String formatPressure(Context context, double pressure, boolean isMetric) {
+        return context.getString(R.string.format_pressure, pressure);
     }
 
     private static String formatDirection(double angle) {
