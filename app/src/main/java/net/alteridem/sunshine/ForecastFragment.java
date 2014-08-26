@@ -72,7 +72,10 @@ public class ForecastFragment extends Fragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        if (!getLoaderManager().hasRunningLoaders() && getLoaderManager().getLoader(FORECAST_LOADER) == null)
+            getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        else
+            getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
     @Override

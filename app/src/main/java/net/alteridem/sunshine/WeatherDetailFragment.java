@@ -110,7 +110,10 @@ public class WeatherDetailFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        if( mLocation != null && !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
+        Intent intent = getActivity().getIntent();
+        if (intent != null && !intent.hasExtra(Intent.EXTRA_TEXT) &&
+                mLocation != null &&
+                !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
             getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
         }
     }
