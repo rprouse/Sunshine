@@ -5,9 +5,16 @@ package net.alteridem.sunshine;
  * implement. This mechanism allows activities to be notified of item
  * selections.
  */
-public interface ICallback {
+public interface IForecastFragmentHost {
     /**
      * Callback for when an item has been selected.
      */
     public void onItemSelected(String date);
+
+    /**
+     * Returns true if this is a two pane view
+     *
+     * @return
+     */
+    public boolean isTwoPane();
 }

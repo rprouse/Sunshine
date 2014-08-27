@@ -12,7 +12,7 @@ import android.view.MenuItem;
 
 import java.util.Locale;
 
-public class MainActivity extends ActionBarActivity implements ICallback {
+public class MainActivity extends ActionBarActivity implements IForecastFragmentHost {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private boolean mTwoPane;
@@ -119,5 +119,10 @@ public class MainActivity extends ActionBarActivity implements ICallback {
                     .putExtra(WeatherDetailFragment.DATE_KEY, date);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public boolean isTwoPane() {
+        return mTwoPane;
     }
 }

@@ -98,7 +98,7 @@ public class ForecastFragment extends Fragment
                 Cursor cursor = adapter.getCursor();
                 if (cursor != null && cursor.moveToPosition(position)) {
                     String date = cursor.getString(ForecastFragment.COL_WEATHER_DATE);
-                    ICallback callback = (ICallback) getActivity();
+                    IForecastFragmentHost callback = (IForecastFragmentHost) getActivity();
                     callback.onItemSelected(date);
                 }
                 mPosition = position;
@@ -124,7 +124,7 @@ public class ForecastFragment extends Fragment
     public void onResume() {
         super.onResume();
         if (mLocation != null && !Utility.getPreferredLocation(getActivity()).equals(mLocation)) {
-            //updateWeather();
+            updateWeather();
             getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
         }
     }
@@ -157,6 +157,9 @@ public class ForecastFragment extends Fragment
         String sort = WeatherContract.WeatherEntry.COLUMN_DATETEXT + " ASC";
 
         mLocation = Utility.getPreferredLocation(getActivity());
+
+        updateWeather();
+
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(mLocation, startDate);
 
         Log.d(LOG_TAG, "Uri: " + weatherForLocationUri.toString());
@@ -174,8 +177,7 @@ public class ForecastFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
-        if (mPosition != ListView.INVALID_POSITION) {
-            mListView.setSelection(mPosition);
+        if (mPosition != ListView.INVALID_POSITION && ((IForecastFragmentHost) getActivity()).isTwoPane()) {
             mListView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
