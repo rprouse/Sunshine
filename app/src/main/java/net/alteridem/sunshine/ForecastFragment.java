@@ -35,6 +35,8 @@ public class ForecastFragment extends Fragment
     View mRootView;
 
     private static final int FORECAST_LOADER = 0;
+    private static final String LIST_POSITION = "LIST_POSITION";
+    private int mPosition = 0;
     private String mLocation;
     private ListView mListView;
 
@@ -79,10 +81,11 @@ public class ForecastFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         mRootView = inflater.inflate(R.layout.fragment_main, container, false);
+        if (savedInstanceState != null && savedInstanceState.containsKey(LIST_POSITION))
+            mPosition = savedInstanceState.getInt(LIST_POSITION);
 
         mAdapter = new ForecastAdapter(getActivity(), null, 0);
 
@@ -98,9 +101,18 @@ public class ForecastFragment extends Fragment
                     ICallback callback = (ICallback) getActivity();
                     callback.onItemSelected(date);
                 }
+                mPosition = position;
             }
         });
         return mRootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mPosition != ListView.INVALID_POSITION) {
+            outState.putInt(LIST_POSITION, mPosition);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -162,14 +174,20 @@ public class ForecastFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
-        mListView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mListView.setSelection(0);
-                mListView.performItemClick(mListView.getChildAt(0), 0, 0);
-            }
-        }, 100);
-        if ( !mLocation.equals(Utility.getPreferredLocation(getActivity())) ) {
+        if (mPosition != ListView.INVALID_POSITION) {
+            mListView.setSelection(mPosition);
+            mListView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mListView.smoothScrollToPosition(mPosition);
+                    mListView.setSelection(mPosition);
+                    mListView.performItemClick(mListView.getChildAt(0), mPosition, mPosition);
+
+                }
+            }, 100);
+        }
+
+        if (!mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
             getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
         }
     }
