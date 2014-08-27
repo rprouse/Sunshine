@@ -12,7 +12,7 @@ import android.view.MenuItem;
 
 import java.util.Locale;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ICallback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private boolean mTwoPane;
@@ -33,12 +33,6 @@ public class MainActivity extends ActionBarActivity {
         } else {
             mTwoPane = false;
         }
-
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.fragment_forecast, new ForecastFragment())
-//                    .commit();
-//        }
         Log.d(LOG_TAG, "onCreate");
     }
 
@@ -101,10 +95,29 @@ public class MainActivity extends ActionBarActivity {
         String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
         String uri = String.format(Locale.ENGLISH, "geo:0,0?q=%s", location);
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        if(intent.resolveActivity(getPackageManager()) != null ) {
+        if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         } else {
             Log.d(LOG_TAG, "Couldn't call " + location);
+        }
+    }
+
+    @Override
+    public void onItemSelected(String date) {
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putString(WeatherDetailFragment.DATE_KEY, date);
+
+            WeatherDetailFragment fragment = new WeatherDetailFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.weather_detail_container, fragment)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .putExtra(WeatherDetailFragment.DATE_KEY, date);
+            startActivity(intent);
         }
     }
 }

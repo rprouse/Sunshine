@@ -1,6 +1,5 @@
 package net.alteridem.sunshine;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,6 +36,7 @@ public class ForecastFragment extends Fragment
 
     private static final int FORECAST_LOADER = 0;
     private String mLocation;
+    private ListView mListView;
 
     // For the forecast view we're showing only a small subset of the stored data.
     // Specify the columns we need.
@@ -86,18 +86,17 @@ public class ForecastFragment extends Fragment
 
         mAdapter = new ForecastAdapter(getActivity(), null, 0);
 
-        ListView listView = (ListView) mRootView.findViewById(R.id.listview_forecast);
-        listView.setAdapter(mAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView = (ListView) mRootView.findViewById(R.id.listview_forecast);
+        mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CursorAdapter adapter = (CursorAdapter) parent.getAdapter();
                 Cursor cursor = adapter.getCursor();
-                if(cursor != null && cursor.moveToPosition(position)) {
-                    String date = cursor.getString(COL_WEATHER_DATE);
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .putExtra(Intent.EXTRA_TEXT, date);
-                    getActivity().startActivity(intent);
+                if (cursor != null && cursor.moveToPosition(position)) {
+                    String date = cursor.getString(ForecastFragment.COL_WEATHER_DATE);
+                    ICallback callback = (ICallback) getActivity();
+                    callback.onItemSelected(date);
                 }
             }
         });
@@ -163,6 +162,13 @@ public class ForecastFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
+        mListView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mListView.setSelection(0);
+                mListView.performItemClick(mListView.getChildAt(0), 0, 0);
+            }
+        }, 100);
         if ( !mLocation.equals(Utility.getPreferredLocation(getActivity())) ) {
             getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
         }

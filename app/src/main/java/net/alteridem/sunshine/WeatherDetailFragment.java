@@ -29,10 +29,10 @@ import net.alteridem.sunshine.data.WeatherContract;
 public class WeatherDetailFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor>{
 
+    public static final String DATE_KEY = "net.alteridem.sunshine.weatherDetailDate";
     private static final String LOG_TAG = WeatherDetailFragment.class.getSimpleName();
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
     private static final String LOCATION_KEY = "location";
-    private String mDate;
 
     private static final int DETAILS_LOADER = 1;
     private String mLocation;
@@ -84,19 +84,18 @@ public class WeatherDetailFragment extends Fragment
         if(savedInstanceState != null && savedInstanceState.containsKey(LOCATION_KEY)) {
             mLocation = savedInstanceState.getString(LOCATION_KEY);
         }
-        getLoaderManager().initLoader(DETAILS_LOADER, null, this);
+
+        Bundle args = getArguments();
+        if (args != null && args.containsKey(DATE_KEY)) {
+            getLoaderManager().initLoader(DETAILS_LOADER, null, this);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-            mDate = intent.getStringExtra(Intent.EXTRA_TEXT);
-        }
-        return rootView;
+        return inflater.inflate(R.layout.fragment_detail, container, false);
     }
 
     @Override
@@ -110,8 +109,8 @@ public class WeatherDetailFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        Intent intent = getActivity().getIntent();
-        if (intent != null && !intent.hasExtra(Intent.EXTRA_TEXT) &&
+        Bundle args = getArguments();
+        if (args != null && args.containsKey(DATE_KEY) &&
                 mLocation != null &&
                 !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
             getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
@@ -144,7 +143,11 @@ public class WeatherDetailFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         mLocation = Utility.getPreferredLocation(getActivity());
-        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation, mDate);
+
+        Bundle args = getArguments();
+        String date = args.getString(DATE_KEY);
+
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation, date);
 
         Log.d(LOG_TAG, "Uri: " + weatherForLocationUri.toString());
 
