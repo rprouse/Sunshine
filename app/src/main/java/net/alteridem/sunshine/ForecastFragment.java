@@ -31,8 +31,9 @@ public class ForecastFragment extends Fragment
 
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
-    ForecastAdapter mAdapter;
-    View mRootView;
+    private ForecastAdapter mAdapter;
+    private View mRootView;
+    private boolean mUseTodaylayout;
 
     private static final int FORECAST_LOADER = 0;
     private static final String LIST_POSITION = "LIST_POSITION";
@@ -88,6 +89,7 @@ public class ForecastFragment extends Fragment
             mPosition = savedInstanceState.getInt(LIST_POSITION);
 
         mAdapter = new ForecastAdapter(getActivity(), null, 0);
+        mAdapter.setUseTodayLayout(mUseTodaylayout);
 
         mListView = (ListView) mRootView.findViewById(R.id.listview_forecast);
         mListView.setAdapter(mAdapter);
@@ -149,8 +151,9 @@ public class ForecastFragment extends Fragment
     }
 
     public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodaylayout = useTodayLayout;
         if (mAdapter != null)
-            mAdapter.setUseTodayLayout(useTodayLayout);
+            mAdapter.setUseTodayLayout(mUseTodaylayout);
     }
 
     @Override
