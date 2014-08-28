@@ -148,6 +148,10 @@ public class ForecastFragment extends Fragment
         new FetchWeatherTask(getActivity()).execute(Utility.getPreferredLocation(getActivity()));
     }
 
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mAdapter.setUseTodayLayout(useTodayLayout);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Only return data after today
