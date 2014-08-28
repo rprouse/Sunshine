@@ -149,7 +149,8 @@ public class ForecastFragment extends Fragment
     }
 
     public void setUseTodayLayout(boolean useTodayLayout) {
-        mAdapter.setUseTodayLayout(useTodayLayout);
+        if (mAdapter != null)
+            mAdapter.setUseTodayLayout(useTodayLayout);
     }
 
     @Override
