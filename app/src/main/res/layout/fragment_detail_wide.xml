@@ -15,83 +15,87 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:paddingTop="16dp">
 
             <TextView
                 android:id="@+id/fragment_detail_friendly_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="6dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="24sp"
+                android:fontFamily="sans-serif-condensed"
                 tools:text="Today" />
 
             <TextView
                 android:id="@+id/fragment_detail_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="italic"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="#646464"
                 tools:text="July 12" />
         </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/fragment_detail_max"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="36sp"
+                android:textSize="96sp"
+                android:fontFamily="sans-serif-light"
                 tools:text="22°" />
 
             <TextView
                 android:id="@+id/fragment_detail_min"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:paddingBottom="12dp"
+                android:textSize="48sp"
+                android:fontFamily="sans-serif-light"
+                android:textColor="#646464"
+                android:paddingBottom="16dp"
                 tools:text="18°" />
 
             <TextView
                 android:id="@+id/fragment_detail_humidity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="6dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:paddingBottom="4dp"
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-condensed"
                 tools:text="Humidity: 84%" />
 
             <TextView
                 android:id="@+id/fragment_detail_wind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="6dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:paddingBottom="4dp"
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-condensed"
                 tools:text="Wind: 6 km/H NW" />
 
             <TextView
                 android:id="@+id/fragment_detail_pressure"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="6dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-condensed"
                 tools:text="Pressure: 1014 hPa" />
         </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/fragment_detail_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="144dp"
+                android:layout_height="144dp"
                 android:layout_gravity="center_horizontal"
                 tools:src="@drawable/art_clouds" />
 
@@ -100,6 +104,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="#646464"
                 tools:text="Cloudy" />
         </LinearLayout>
 

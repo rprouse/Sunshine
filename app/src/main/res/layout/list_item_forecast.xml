@@ -3,59 +3,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:background="@drawable/touch_selector"
     android:gravity="center_vertical"
-    android:background="@drawable/touch_selector">
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
 
-<ImageView
+    <ImageView
         android:id="@+id/list_item_icon"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="60"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_rain" />
 
     <LinearLayout
         android:layout_width="0dp"
+        android:layout_weight="175"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginLeft="16dp"
-        android:layout_weight="1">
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/list_item_date_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:text="Today"
-            android:id="@+id/list_item_date_textview" />
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="22sp"
+            tools:text="Today" />
 
         <TextView
+            android:id="@+id/list_item_forecast_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:text="Sunny"
-            android:id="@+id/list_item_forecast_textview" />
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="14sp"
+            tools:text="Sunny" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="125"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        tools:text="21°"
-        android:id="@+id/list_item_high_textview" />
+        <TextView
+            android:id="@+id/list_item_high_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="22sp"
+            tools:text="21°" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        tools:text="14°"
-        android:id="@+id/list_item_low_textview" />
+        <TextView
+            android:id="@+id/list_item_low_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="14sp"
+            tools:text="14°" />
 
     </LinearLayout>
 </LinearLayout>
