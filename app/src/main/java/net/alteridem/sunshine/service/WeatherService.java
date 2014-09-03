@@ -1,6 +1,8 @@
 package net.alteridem.sunshine.service;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -107,6 +109,17 @@ public class WeatherService extends IntentService {
         } catch (JSONException e) {
             Log.e(TAG, "Error, failed to parse JSON ", e);
             e.printStackTrace();
+        }
+    }
+
+    static public class AlarmReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String location = intent.getStringExtra(LOCATION_QUERY_EXTRA);
+            Intent i = new Intent(context, WeatherService.class);
+            i.putExtra(WeatherService.LOCATION_QUERY_EXTRA, location);
+            context.startService(i);
         }
     }
 }
