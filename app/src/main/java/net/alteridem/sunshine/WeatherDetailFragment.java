@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.alteridem.sunshine.data.WeatherContract;
+import net.alteridem.sunshine.views.WindView;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -173,6 +174,10 @@ public class WeatherDetailFragment extends Fragment
             TextView humidityTextView = (TextView)getView().findViewById(R.id.fragment_detail_humidity);
             TextView windTextView = (TextView)getView().findViewById(R.id.fragment_detail_wind);
             TextView pressureTextView = (TextView)getView().findViewById(R.id.fragment_detail_pressure);
+            WindView windView = (WindView)getView().findViewById(R.id.fragment_detail_windview);
+            if (windView != null) {
+                windView.setWindDirection(cursor.getDouble(COL_WEATHER_DIRECTION));
+            }
 
             boolean isMetric = Utility.isMetric(getActivity());
             int weatherId = cursor.getInt(COL_WEATHER_ID);

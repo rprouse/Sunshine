@@ -92,31 +92,51 @@
             </LinearLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/fragment_detail_humidity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="4dp"
-            android:textSize="22sp"
-            android:fontFamily="sans-serif-light"
-            tools:text="Humidity: 84%" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/fragment_detail_wind"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="4dp"
-            android:textSize="22sp"
-            android:fontFamily="sans-serif-light"
-            tools:text="Wind: 6 km/H NW" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/fragment_detail_pressure"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:fontFamily="sans-serif-light"
-            tools:text="Pressure: 1014 hPa" />
+                <TextView
+                    android:id="@+id/fragment_detail_humidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:textSize="22sp"
+                    android:fontFamily="sans-serif-light"
+                    tools:text="Humidity: 84%" />
+
+                <TextView
+                    android:id="@+id/fragment_detail_wind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:textSize="22sp"
+                    android:fontFamily="sans-serif-light"
+                    tools:text="Wind: 6 km/H NW" />
+
+                <TextView
+                    android:id="@+id/fragment_detail_pressure"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:fontFamily="sans-serif-light"
+                    tools:text="Pressure: 1014 hPa" />
+            </LinearLayout>
+
+            <net.alteridem.sunshine.views.WindView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="3"
+                android:padding="12dp"
+                android:id="@+id/fragment_detail_windview"/>
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>
