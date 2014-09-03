@@ -1,5 +1,6 @@
 package net.alteridem.sunshine;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import net.alteridem.sunshine.data.WeatherContract;
+import net.alteridem.sunshine.service.WeatherService;
 
 import java.util.Date;
 
@@ -147,7 +149,9 @@ public class ForecastFragment extends Fragment
     }
 
     private void updateWeather() {
-        new FetchWeatherTask(getActivity()).execute(Utility.getPreferredLocation(getActivity()));
+        Intent intent = new Intent(getActivity(), WeatherService.class);
+        intent.putExtra(WeatherService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
+        getActivity().startService(intent);
     }
 
     public void setUseTodayLayout(boolean useTodayLayout) {

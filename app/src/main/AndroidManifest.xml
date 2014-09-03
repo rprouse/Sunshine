@@ -37,6 +37,8 @@
             android:authorities="net.alteridem.sunshine"
             android:enabled="true"
             android:exported="false" />
+
+        <service android:name=".service.WeatherService" />
     </application>
 
 </manifest>
