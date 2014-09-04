@@ -26,7 +26,9 @@
         <item>metric</item>
         <item>imperial</item>
     </string-array>
-    <string name="pref_notifications_title">Show weather notifications</string>
+    <string name="pref_notifications_title">Show Notifications</string>
+    <string name="pref_notifications_true">Enabled</string>
+    <string name="pref_notifications_false">Disabled</string>
     <string name="pref_notifications_key" translatable="false">notifications</string>
 
 
