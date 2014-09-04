@@ -148,11 +148,6 @@ public class ForecastFragment extends Fragment
     }
 
     private void updateWeather() {
-//        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-//        Intent intent = new Intent(getActivity(), WeatherService.AlarmReceiver.class);
-//        intent.putExtra(WeatherService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
-//        PendingIntent alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, alarmIntent);
         WeatherSyncAdapter.syncImmediately(getActivity());
     }
 
