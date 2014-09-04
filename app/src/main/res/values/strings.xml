@@ -61,5 +61,5 @@
 
     <!-- Notifications -->
     <string name="pref_last_notification" translatable="false">last_notification</string>
-    <string name="format_notification">Forecast: <xliff:g id="forecast">%1$s</xliff:g> High: <xliff:g id="high">%2$s</xliff:g>\u00B0 Low: <xliff:g id="low">%3$s</xliff:g>\u00B0</string>
+    <string name="format_notification"><xliff:g id="forecast">%1$s</xliff:g> <xliff:g id="high">%2$s</xliff:g> / <xliff:g id="low">%3$s</xliff:g></string>
 </resources>

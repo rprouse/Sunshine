@@ -2,10 +2,13 @@ package net.alteridem.sunshine.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
@@ -14,8 +17,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
+import net.alteridem.sunshine.MainActivity;
 import net.alteridem.sunshine.R;
 import net.alteridem.sunshine.Utility;
 import net.alteridem.sunshine.WeatherDataParser;
@@ -265,7 +271,37 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter {
                         Utility.formatTemperature(context, low, isMetric));
 
                 //build your notification here.
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                        .setSmallIcon(iconId)
+                        .setContentTitle(title)
+                        .setContentText(contentText);
 
+                // Creates an explicit intent for an Activity in your app
+                Intent resultIntent = new Intent(context, MainActivity.class);
+
+                // The stack builder object will contain an artificial back stack for the
+                // started Activity.
+                // This ensures that navigating backward from the Activity leads out of
+                // your application to the Home screen.
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+
+                // Adds the back stack for the Intent (but not the Intent itself)
+                stackBuilder.addParentStack(MainActivity.class);
+
+                // Adds the Intent that starts the Activity to the top of the stack
+                stackBuilder.addNextIntent(resultIntent);
+                PendingIntent resultPendingIntent =
+                        stackBuilder.getPendingIntent(
+                                0,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
+
+                builder.setContentIntent(resultPendingIntent);
+                NotificationManager mNotificationManager =
+                        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
+                mNotificationManager.notify(WEATHER_NOTIFICATION_ID, builder.build());
 
                 //refreshing last sync
                 SharedPreferences.Editor editor = prefs.edit();
