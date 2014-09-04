@@ -29,6 +29,10 @@
         <item>imperial</item>
     </string-array>
 
+    <!-- Sync related strings -->
+    <string name="sync_account_type" translatable="false">sunshine.alteridem.net</string>
+    <string name="content_authority" translatable="false">net.alteridem.sunshine</string>
+
     <!-- Date label when displaying today's weather forecast [CHAR LIMIT=20] -->
     <string name="today">Today</string>
 
