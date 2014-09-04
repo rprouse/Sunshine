@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import net.alteridem.sunshine.sync.WeatherSyncAdapter;
+
 import java.util.Locale;
 
 public class MainActivity extends ActionBarActivity implements IForecastFragmentHost {
@@ -37,6 +39,8 @@ public class MainActivity extends ActionBarActivity implements IForecastFragment
         ForecastFragment forecastFragment = ((ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast));
         if (forecastFragment != null)
             forecastFragment.setUseTodayLayout(!mTwoPane);
+
+        WeatherSyncAdapter.initializeSyncAdapter(this);
         Log.d(LOG_TAG, "onCreate");
     }
 
