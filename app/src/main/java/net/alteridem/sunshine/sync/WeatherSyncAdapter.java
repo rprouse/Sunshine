@@ -240,8 +240,14 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void notifyWeather() {
         Context context = getContext();
-        //checking the last update and notify if it' the first of the day
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        // check if the user wants to see notifications
+        String showNotificationsKey = context.getString(R.string.pref_notifications_key);
+        boolean showNotifications = prefs.getBoolean(showNotificationsKey, true);
+        if (!showNotifications) return;
+
+        //checking the last update and notify if it' the first of the day
         String lastNotificationKey = context.getString(R.string.pref_last_notification);
         long lastSync = prefs.getLong(lastNotificationKey, 0);
 
