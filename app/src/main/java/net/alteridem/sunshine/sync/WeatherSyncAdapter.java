@@ -2,7 +2,6 @@ package net.alteridem.sunshine.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
@@ -13,11 +12,13 @@ import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
@@ -260,6 +261,7 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter {
                 String desc = cursor.getString(INDEX_SHORT_DESC);
 
                 int iconId = Utility.getIconResourceForWeatherCondition(weatherId);
+                int backgroundId = Utility.getBackgroundResourceForWeatherCondition(weatherId);
                 String title = context.getString(R.string.app_name);
 
                 boolean isMetric = Utility.isMetric(context);
@@ -271,10 +273,6 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter {
                         Utility.formatTemperature(context, low, isMetric));
 
                 //build your notification here.
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                        .setSmallIcon(iconId)
-                        .setContentTitle(title)
-                        .setContentText(contentText);
 
                 // Creates an explicit intent for an Activity in your app
                 Intent resultIntent = new Intent(context, MainActivity.class);
@@ -296,12 +294,21 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter {
                                 PendingIntent.FLAG_UPDATE_CURRENT
                         );
 
-                builder.setContentIntent(resultPendingIntent);
-                NotificationManager mNotificationManager =
-                        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationCompat.WearableExtender extender = new NotificationCompat.WearableExtender()
+                        .setHintHideIcon(true)
+                        .setBackground(BitmapFactory.decodeResource(context.getResources(), backgroundId));
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                        .setSmallIcon(iconId)
+                        .setContentTitle(title)
+                        .setContentText(contentText)
+                        .setContentIntent(resultPendingIntent)
+                        .extend(extender);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
                 // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
-                mNotificationManager.notify(WEATHER_NOTIFICATION_ID, builder.build());
+                notificationManager.notify(WEATHER_NOTIFICATION_ID, builder.build());
 
                 //refreshing last sync
                 SharedPreferences.Editor editor = prefs.edit();
