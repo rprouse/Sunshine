@@ -96,8 +96,8 @@ public class WeatherDataParser {
         JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
         String cityName = cityJson.getString(OWM_CITY_NAME);
         JSONObject coordJSON = cityJson.getJSONObject(OWM_COORD);
-        double cityLatitude = coordJSON.getLong(OWM_COORD_LAT);
-        double cityLongitude = coordJSON.getLong(OWM_COORD_LONG);
+        double cityLatitude = coordJSON.getDouble(OWM_COORD_LAT);
+        double cityLongitude = coordJSON.getDouble(OWM_COORD_LONG);
 
         Log.v(LOG_TAG, cityName + ", with coord: " + cityLatitude + " " + cityLongitude);
 
