@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -171,6 +172,7 @@ public class WeatherDataParser {
             resultStrs[i] = day + " - " + description + " - " + highAndLow;
         }
         insertWeatherInDatabase(cVVector);
+        deleteOldWeatherData();
         return resultStrs;
     }
 
@@ -210,5 +212,19 @@ public class WeatherDataParser {
             );
             Log.v(LOG_TAG, "inserting " + rows + " weather values into the database");
         }
+    }
+
+    private void deleteOldWeatherData() {
+        // Calculate yesterday's date string
+        Calendar yesterday = Calendar.getInstance();
+        yesterday.add(Calendar.DATE, -1);
+        String[] selectionArgs = new String[]{WeatherContract.getDbDateString(yesterday.getTime())};
+
+        mContext.getContentResolver().delete(
+                WeatherContract.WeatherEntry.CONTENT_URI,
+                WeatherContract.WeatherEntry.COLUMN_DATETEXT + " <= ?",
+                selectionArgs
+        );
+        Log.v(LOG_TAG, "deleting old weather values from the database");
     }
 }

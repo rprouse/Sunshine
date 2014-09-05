@@ -39,7 +39,7 @@ public class WeatherProvider extends ContentProvider {
 
     private static final String sLocationSettingWithStartDateSelection =
             WeatherContract.LocationEntry.TABLE_NAME + "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
-            WeatherContract.WeatherEntry.COLUMN_DATETEXT + " >= ? ";
+                    WeatherContract.WeatherEntry.COLUMN_DATETEXT + " >= ? ";
 
     private static final String sLocationSettingWithDateSelection =
             WeatherContract.LocationEntry.TABLE_NAME + "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
@@ -57,57 +57,57 @@ public class WeatherProvider extends ContentProvider {
         // and query the database accordingly.
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-        // "weather/*/*"
-        case WEATHER_WITH_LOCATION_AND_DATE: {
-            retCursor = getWeatherByLocationAndDateSetting(uri, projection, sortOrder);
-            break;
-        }
-        // "weather/*"
-        case WEATHER_WITH_LOCATION: {
-            retCursor = getWeatherByLocationSetting(uri, projection, sortOrder);
-            break;
-        }
-        // "weather"
-        case WEATHER: {
-            retCursor = mOpenHelper.getReadableDatabase().query(
-                    WeatherContract.WeatherEntry.TABLE_NAME,
-                    projection,
-                    selection,
-                    selectionArgs,
-                    null,
-                    null,
-                    sortOrder
-            );
-            break;
-        }
-        // "location/*"
-        case LOCATION_ID: {
-            retCursor = mOpenHelper.getReadableDatabase().query(
-                    WeatherContract.LocationEntry.TABLE_NAME,
-                    projection,
-                    WeatherContract.LocationEntry._ID + " = '" + ContentUris.parseId(uri) + "'",
-                    null,
-                    null,
-                    null,
-                    sortOrder
-            );
-            break;
-        }
-        // "location"
-        case LOCATION: {
-            retCursor = mOpenHelper.getReadableDatabase().query(
-                    WeatherContract.LocationEntry.TABLE_NAME,
-                    projection,
-                    selection,
-                    selectionArgs,
-                    null,
-                    null,
-                    sortOrder
-            );
-            break;
-        }
-        default:
-            throw new UnsupportedOperationException("Unknown uri: " + uri);
+            // "weather/*/*"
+            case WEATHER_WITH_LOCATION_AND_DATE: {
+                retCursor = getWeatherByLocationAndDateSetting(uri, projection, sortOrder);
+                break;
+            }
+            // "weather/*"
+            case WEATHER_WITH_LOCATION: {
+                retCursor = getWeatherByLocationSetting(uri, projection, sortOrder);
+                break;
+            }
+            // "weather"
+            case WEATHER: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        WeatherContract.WeatherEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            // "location/*"
+            case LOCATION_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        WeatherContract.LocationEntry.TABLE_NAME,
+                        projection,
+                        WeatherContract.LocationEntry._ID + " = '" + ContentUris.parseId(uri) + "'",
+                        null,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            // "location"
+            case LOCATION: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        WeatherContract.LocationEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
@@ -198,7 +198,7 @@ public class WeatherProvider extends ContentProvider {
                         selectionArgs);
                 break;
             case LOCATION:
-                rowsUpdated =  db.update(WeatherContract.LocationEntry.TABLE_NAME, values, selection,
+                rowsUpdated = db.update(WeatherContract.LocationEntry.TABLE_NAME, values, selection,
                         selectionArgs);
                 break;
             default:
@@ -220,7 +220,7 @@ public class WeatherProvider extends ContentProvider {
                 db.beginTransaction();
                 int rows = 0;
                 try {
-                    for(ContentValues value : values) {
+                    for (ContentValues value : values) {
                         long id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, value);
                         if (id != -1) {
                             rows++;
@@ -258,10 +258,10 @@ public class WeatherProvider extends ContentProvider {
 
         if (startDate == null) {
             selection = sLocationSettingSelection;
-            selectionArgs = new String[] { locationSetting };
+            selectionArgs = new String[]{locationSetting};
         } else {
             selection = sLocationSettingWithStartDateSelection;
-            selectionArgs = new String[] { locationSetting, startDate };
+            selectionArgs = new String[]{locationSetting, startDate};
         }
         return sWeatherByLocationSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
     }
@@ -270,7 +270,7 @@ public class WeatherProvider extends ContentProvider {
         String locationSetting = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
         String date = WeatherContract.WeatherEntry.getDateFromUri(uri);
 
-        String[] selectionArgs = new String[] { locationSetting, date };
+        String[] selectionArgs = new String[]{locationSetting, date};
         String selection = sLocationSettingWithDateSelection;
         return sWeatherByLocationSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
     }
