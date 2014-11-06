@@ -1,12 +1,11 @@
 package net.alteridem.sunshine;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -24,9 +23,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import net.alteridem.sunshine.data.WeatherContract;
-import net.alteridem.sunshine.service.WeatherService;
+import net.alteridem.sunshine.sync.WeatherSyncAdapter;
 
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -61,7 +61,9 @@ public class ForecastFragment extends Fragment
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
             WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
-            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+            WeatherContract.LocationEntry.COLUMN_COORD_LAT,
+            WeatherContract.LocationEntry.COLUMN_COORD_LONG
     };
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
@@ -73,9 +75,8 @@ public class ForecastFragment extends Fragment
     public static final int COL_WEATHER_MIN_TEMP = 4;
     public static final int COL_LOCATION_SETTING = 5;
     public static final int COL_WEATHER_ID = 6;
-
-    public ForecastFragment() {
-    }
+    public static final int COL_COORD_LAT = 7;
+    public static final int COL_COORD_LONG = 8;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -115,6 +116,50 @@ public class ForecastFragment extends Fragment
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_view_location) {
+            viewLocationOnMap();
+            return true;
+        }
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(getActivity(), SettingsActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void viewLocationOnMap() {
+        String uri;
+        if (mAdapter != null && mAdapter.getCursor() != null) {
+            Cursor cursor = mAdapter.getCursor();
+            cursor.moveToFirst();
+            double latitude = cursor.getDouble(COL_COORD_LAT);
+            double longitude = cursor.getDouble(COL_COORD_LONG);
+            uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
+        } else {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+            uri = String.format(Locale.ENGLISH, "geo:0,0?q=%s", location);
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Log.d(LOG_TAG, "Couldn't call " + uri);
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         if (mPosition != ListView.INVALID_POSITION) {
             outState.putInt(LIST_POSITION, mPosition);
@@ -123,43 +168,15 @@ public class ForecastFragment extends Fragment
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         if (mLocation != null && !Utility.getPreferredLocation(getActivity()).equals(mLocation)) {
-            updateWeather();
             getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
         }
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.forecast_fragment, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            updateWeather();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private void updateWeather() {
-//        Intent intent = new Intent(getActivity(), WeatherService.class);
-//        intent.putExtra(WeatherService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
-//        getActivity().startService(intent);
-        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getActivity(), WeatherService.AlarmReceiver.class);
-        intent.putExtra(WeatherService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, alarmIntent);
+        WeatherSyncAdapter.syncImmediately(getActivity());
     }
 
     public void setUseTodayLayout(boolean useTodayLayout) {

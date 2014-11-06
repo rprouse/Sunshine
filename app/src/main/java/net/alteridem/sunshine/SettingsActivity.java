@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import net.alteridem.sunshine.data.WeatherContract;
+import net.alteridem.sunshine.sync.WeatherSyncAdapter;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -65,9 +66,7 @@ public class SettingsActivity extends PreferenceActivity
 
         if (!mBindingPreference) {
             if (preference.getKey().equals(getString(R.string.pref_location_key))) {
-                FetchWeatherTask task = new FetchWeatherTask(this);
-                String location = value.toString();
-                task.execute(location);
+                WeatherSyncAdapter.syncImmediately(this);
             } else {
                 // Notify that changes might have occurred
                 getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
